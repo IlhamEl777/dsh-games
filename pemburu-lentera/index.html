@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: blob:; media-src data: blob:; font-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline' https://telegram.org; connect-src 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: blob:; media-src data: blob:; font-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline' https://telegram.org; connect-src https://script.google.com https://script.googleusercontent.com; form-action 'none'">
 <title>Pemburu Lentera</title>
 <style>html,body{margin:0;width:100%;height:100%;height:100dvh;overflow:hidden;background:#000;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:none}canvas{display:block;width:100vw;height:100vh;height:100dvh;touch-action:none;outline:none;-webkit-tap-highlight-color:transparent}</style></head><body><canvas id="game" tabindex="0"></canvas>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -981,7 +981,7 @@
 })();
 </script>
 
-<div id="tg-score-banner" style="display:none;position:fixed;left:12px;right:12px;bottom:14px;z-index:10;background:rgba(10,20,12,.92);color:#ffe9a8;border:1px solid #ffd66b;border-radius:12px;padding:10px 14px;font:600 14px/1.45 system-ui,sans-serif;text-align:center">🏆 Skor dikirim ke bot — cek /leaderboard di @pemburu_lentera_bot.<br><span style="color:#d6f0d0;font-weight:400">Tidak muncul? Artinya game ini dibuka bukan dari tombol 🏮 di /start — skor hanya tersinkron dari tombol itu.</span></div>
+<div id="tg-score-banner" style="display:none;position:fixed;left:12px;right:12px;bottom:14px;z-index:10;background:rgba(10,20,12,.92);color:#ffe9a8;border:1px solid #ffd66b;border-radius:12px;padding:10px 14px;font:600 14px/1.45 system-ui,sans-serif;text-align:center">🏆 Skor tersinkron ke leaderboard — cek /leaderboard di @pemburu_lentera_bot.<br><span style="color:#d6f0d0;font-weight:400">Sinkron butuh ±30 detik. Skor hanya tercatat bila game dibuka dari dalam Telegram.</span></div>
 <script>
 (function () {
   var tg = window.Telegram && window.Telegram.WebApp;
@@ -1019,6 +1019,19 @@
         sentForPhase = true;
         try { tg.HapticFeedback.notificationOccurred(s.phase === 'won' ? 'success' : 'warning'); } catch (e) {}
         try { tg.sendData(JSON.stringify({ game: 'pemburu-lentera', score: s.score, phase: s.phase })); } catch (e) {}
+        // Tahap 3 — universal sync: POST the score + raw initData to the
+        // Apps Script mailbox. Works from ANY launch context (menu button,
+        // shared link, keyboard). The bot validates the initData signature
+        // server-side and dedupes against the sendData copy above.
+        try {
+          var api = 'https://script.google.com/macros/s/AKfycbxtfdwxQQV9d7ZSVde7stURrneQ_Iz3l9f69vhThvpTMqPp6jC4PtZDGXTubS3knjaF/exec';
+          if (api && tg.initData) {
+            fetch(api, { method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain' },
+              body: JSON.stringify({ key: 'pl-d7831c92c6c6165a', initData: tg.initData, score: s.score, phase: s.phase })
+            });
+          }
+        } catch (e) {}
         if (window.TelegramGameProxy && TelegramGameProxy.shareScore) {
           try { TelegramGameProxy.shareScore(); } catch (e) {}
         }
