@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Ninja Era — Arena Telegram</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1220;--panel:#182036;--panel2:#1f2947;--line:#33406b;--txt:#eef1ff;--mut:#9aa7cf;--acc:#ffb340;--red:#ff5d5d;--grn:#4ade80;--blu:#53b6ff}
+body{background:radial-gradient(120% 60% at 50% 0%,#26335e 0%,var(--bg) 55%);color:var(--txt);font:15px/1.45 system-ui,-apple-system,sans-serif;min-height:100vh;padding:12px 12px 28px;max-width:480px;margin:0 auto}
+h1{font-size:22px;text-align:center;letter-spacing:.5px}
+h1 .era{color:var(--acc)}
+.sub{text-align:center;color:var(--mut);font-size:13px;margin:2px 0 12px}
+button{font:inherit;color:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer}
+button:active{transform:scale(.97)}
+button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;border:none;font-weight:700;width:100%;padding:13px;font-size:16px}
+button:disabled{opacity:.38;cursor:default}
+.roster{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.card{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:9px 6px;text-align:center;cursor:pointer;transition:border-color .15s}
+.card.sel{border-color:var(--acc);background:var(--panel2)}
+.card .ava{font-size:34px;line-height:1.1}
+.card .nm{font-weight:700;font-size:13px}
+.card .cls{font-size:11px;color:var(--acc)}
+.card .el{font-size:11px;color:var(--mut)}
+.card .st{font-size:10px;color:var(--mut);margin-top:2px}
+.syn{background:#14251a;border:1px solid #2c5c3a;color:#b9f4c9;border-radius:10px;padding:8px 10px;font-size:13px;margin:10px 0;display:none}
+.stagebar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:var(--mut)}
+.stagebar b{color:var(--txt)}
+.team{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.fighter{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:8px 5px;text-align:center;position:relative;transition:transform .12s,border-color .12s}
+.fighter .ava{font-size:32px}
+.fighter .nm{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden}
+.fighter .el{font-size:10px;color:var(--mut)}
+.fighter.dead{opacity:.35;filter:grayscale(1)}
+.fighter.active{border-color:var(--acc)}
+.fighter.targetable{border-color:var(--red);animation:pulse 0.8s infinite}
+.fighter.hit{animation:shake .3s}
+.fighter.lunge{transform:translateY(-6px) scale(1.06)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,93,93,.0)}50%{box-shadow:0 0 0 4px rgba(255,93,93,.35)}}
+.bar{height:8px;background:#0a0e1a;border-radius:99px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--grn);transition:width .3s}
+.bar.hp i.low{background:var(--red)}
+.bar.ck{height:5px}.bar.ck i{background:var(--blu)}
+.hpnum{font-size:10px;color:var(--mut)}
+.vs{text-align:center;color:var(--mut);font-size:12px;margin:2px 0 8px;letter-spacing:2px}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
+.actions button{font-size:13px;padding:11px 4px}
+.actions button small{display:block;color:var(--mut);font-size:10px}
+.actions button.armed{border-color:var(--acc);background:#3a2c10}
+.log{background:#0a0e1a;border:1px solid var(--line);border-radius:12px;padding:9px 11px;height:118px;overflow-y:auto;font-size:12.5px;color:#c9d2f2}
+.log div{margin-bottom:2px}
+.log .good{color:#b9f4c9}.log .bad{color:#ffb3b3}.log .sys{color:var(--acc)}
+.hidden{display:none}
+.endbox{text-align:center;padding:22px 10px}
+.endbox .big{font-size:44px}
+.endbox h2{margin:6px 0}
+.endbox p{color:var(--mut);margin-bottom:14px}
+#tg-banner{display:none;background:#14251a;border:1px solid #2c5c3a;color:#b9f4c9;border-radius:10px;padding:8px 10px;font-size:13px;margin-top:10px;text-align:center}
+.turninfo{text-align:center;font-size:13px;color:var(--acc);min-height:20px;margin:4px 0}
+</style>
+</head>
+<body>
+<h1>🥷 NINJA <span class="era">ERA</span></h1>
+<p class="sub" id="hello">Arena 3v3 — pilih timmu, menangkan 5 stage!</p>
+
+<section id="screen-pick">
+  <p style="font-size:13px;color:var(--mut);margin-bottom:8px">Ketuk 3 ninja untuk membentuk tim. Kombinasi tertentu mengaktifkan <b style="color:var(--acc)">Sinergi Formasi</b>.</p>
+  <div class="roster" id="roster"></div>
+  <div class="syn" id="synbox"></div>
+  <div style="height:12px"></div>
+  <button class="primary" id="btn-start" disabled>⚔️ Mulai — Stage 1</button>
+  <p style="font-size:12px;color:var(--mut);margin-top:10px">Elemen: 🔥Api &gt; 🌪️Angin &gt; ⚡Petir &gt; 🪨Tanah &gt; 💧Air &gt; 🔥Api (unggul = damage ×1,25). Jurus butuh 30 chakra, Ultimate 100. Bertahan memulihkan 25 chakra &amp; mengurangi damage 50%.</p>
+</section>
+
+<section id="screen-battle" class="hidden">
+  <div class="stagebar"><span>Stage <b id="stage-num">1</b>/5 — <b id="stage-name"></b></span><span>Skor <b id="score">0</b></span></div>
+  <div class="team" id="foes"></div>
+  <div class="vs">— VS —</div>
+  <div class="team" id="allies"></div>
+  <div class="turninfo" id="turninfo"></div>
+  <div class="actions">
+    <button id="act-atk">🗡️ Serang<small>target: ketuk musuh</small></button>
+    <button id="act-skill">🌀 Jurus<small>30 chakra</small></button>
+    <button id="act-def">🛡️ Bertahan<small>+25 chakra</small></button>
+    <button id="act-ult">💥 Ultimate<small>100 chakra</small></button>
+  </div>
+  <div class="log" id="log"></div>
+</section>
+
+<section id="screen-end" class="hidden">
+  <div class="endbox">
+    <div class="big" id="end-emoji">🏆</div>
+    <h2 id="end-title">Menang!</h2>
+    <p id="end-desc"></p>
+    <button class="primary" id="btn-again">🔁 Main Lagi</button>
+    <div id="tg-banner">🏆 Skor terkirim ke bot — cek papan Ninja Era di chat bot.</div>
+  </div>
+</section>
+
+<script>
+'use strict';
+/* ===== Data — diadaptasi dari mekanik APK Ninja Heroes New Era (REA recon):
+   5 elemen chakra, stat HP/ATK/DEF/AGI, kelas C-SS, sinergi formasi. ===== */
+var EL = {api:{n:'Api',e:'🔥'},angin:{n:'Angin',e:'🌪️'},petir:{n:'Petir',e:'⚡'},tanah:{n:'Tanah',e:'🪨'},air:{n:'Air',e:'💧'}};
+var BEATS = {api:'angin',angin:'petir',petir:'tanah',tanah:'air',air:'api'};
+var ROSTER = [
+ {id:'haru', nm:'Haru', ava:'🧑‍🎤', el:'angin', cls:'A', hp:320, atk:62, def:28, agi:78, skill:'Pusaran Angin', ult:'Pusaran Raksasa', sm:1.7, um:3.1},
+ {id:'ren', nm:'Ren', ava:'🥷', el:'petir', cls:'SS', hp:290, atk:74, def:24, agi:88, skill:'Pedang Kilat', ult:'Seribu Kilat', sm:1.8, um:3.3},
+ {id:'hana', nm:'Hana', ava:'👩‍⚕️', el:'air', cls:'A', hp:300, atk:50, def:26, agi:64, skill:'Sembuh Kabut', ult:'Gelombang Pulih', heal:true, sm:1.6, um:2.8},
+ {id:'kaen', nm:'Kaen', ava:'🔥', el:'api', cls:'S', hp:310, atk:70, def:27, agi:70, skill:'Bola Api', ult:'Naga Api', sm:1.75, um:3.2},
+ {id:'yuki', nm:'Yuki', ava:'🧝‍♀️', el:'air', cls:'S', hp:285, atk:66, def:25, agi:80, skill:'Jarum Es', ult:'Badai Salju', sm:1.7, um:3.0},
+ {id:'daichi', nm:'Daichi', ava:'🧔', el:'tanah', cls:'B', hp:390, atk:54, def:38, agi:48, skill:'Hantaman Batu', ult:'Gempa Bumi', sm:1.6, um:2.9},
+ {id:'akira', nm:'Akira', ava:'👤', el:'angin', cls:'SS', hp:275, atk:72, def:23, agi:92, skill:'Bayangan Kembar', ult:'Serbuan Bayangan', sm:1.85, um:3.4},
+ {id:'mika', nm:'Mika', ava:'👧', el:'air', cls:'B', hp:295, atk:48, def:25, agi:68, skill:'Tetes Pulih', ult:'Hujan Berkah', heal:true, sm:1.5, um:2.6},
+ {id:'goro', nm:'Goro', ava:'🦍', el:'tanah', cls:'A', hp:360, atk:60, def:34, agi:52, skill:'Tinju Tanah', ult:'Longsor', sm:1.65, um:3.0}
+];
+var SYNERGIES = [
+ {ids:['haru','ren','hana'], nm:'Trio Penerus', desc:'Serangan cadangan 140%: 25% peluang serangan ekstra tiap giliran.', backup:0.25},
+ {ids:['kaen','yuki','daichi'], nm:'Para Guru', desc:'ATK tim +12%.', atkMul:1.12},
+ {ids:['hana','mika','yuki'], nm:'Tim Medis', desc:'Pulih 12 HP di awal tiap ronde.', regen:12}
+];
+var STAGES = [
+ {nm:'Gerbang Desa', foes:[['Bandit Kabut','🗡️','angin',180,38,16,55],['Bandit Panah','🏹','tanah',170,36,15,50],['Bandit Kapak','🪓','api',190,40,17,45]]},
+ {nm:'Hutan Bambu', foes:[['Penjaga Hutan','🌲','tanah',230,46,20,58],['Pemburu Senyap','🦉','angin',215,50,18,72],['Ahli Racun','🧪','air',225,48,19,60]]},
+ {nm:'Kuil Petir', foes:[['Pendekar Kilat','⚡','petir',270,56,22,80],['Raksasa Kuil','🗿','tanah',320,52,26,40],['Dukun Badai','🌩️','petir',260,58,21,76]]},
+ {nm:'Benteng Api', foes:[['Ksatria Api','🔥','api',310,62,25,66],['Pemanah Lava','🌋','api',290,64,23,70],['Tabib Abu','💧','air',300,55,24,62]]},
+ {nm:'Tahta Kage Bayangan', foes:[['Kage Bayangan','👹','petir',430,72,28,84],['Tangan Kanan Kage','🦹','angin',350,68,26,88],['Penyihir Kegelapan','🔮','api',340,70,25,78]]}
+];
+</script>
+<script>
+'use strict';
+var tg = (window.Telegram && window.Telegram.WebApp) || null;
+if (tg) { try { tg.ready(); tg.expand(); if (tg.setHeaderColor) tg.setHeaderColor('#0d1220'); if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); if (tg.initDataUnsafe && tg.initDataUnsafe.user) document.getElementById('hello').textContent = 'Halo, ' + tg.initDataUnsafe.user.first_name + '! Arena 3v3 — menangkan 5 stage!'; } catch(e){} }
+function hap(kind){ if(!tg) return; try{ if(kind==='err') tg.HapticFeedback.notificationOccurred('error'); else if(kind==='ok') tg.HapticFeedback.notificationOccurred('success'); else tg.HapticFeedback.impactOccurred('light'); }catch(e){} }
+
+var phase = 'title';           // title | playing | won | lost
+var score = 0, stageIdx = 0, round = 0, sentEnd = false;
+var allies = [], foes = [], queue = [], current = null, armed = null, syn = null, backupUsed = {};
+window.__gameState = function(){ return { game:'ninja-era', phase:phase, score:score, stage:stageIdx+1, round:round }; };
+
+var pick = [];
+var rosterEl = document.getElementById('roster');
+ROSTER.forEach(function(r){
+  var d = document.createElement('div'); d.className='card'; d.id='pick-'+r.id;
+  d.innerHTML = '<div class="ava">'+r.ava+'</div><div class="nm">'+r.nm+'</div><div class="cls">Kelas '+r.cls+'</div><div class="el">'+EL[r.el].e+' '+EL[r.el].n+'</div><div class="st">HP '+r.hp+' · ATK '+r.atk+'<br>DEF '+r.def+' · AGI '+r.agi+'<br>🌀 '+r.skill+'</div>';
+  d.onclick = function(){
+    var i = pick.indexOf(r.id);
+    if (i>=0) pick.splice(i,1); else { if (pick.length>=3) return; pick.push(r.id); }
+    d.classList.toggle('sel', pick.indexOf(r.id)>=0); hap('tap'); refreshPick();
+  };
+  rosterEl.appendChild(d);
+});
+function activeSynergy(ids){ for (var i=0;i<SYNERGIES.length;i++){ var s=SYNERGIES[i]; if (s.ids.every(function(x){return ids.indexOf(x)>=0;})) return s; } return null; }
+function refreshPick(){
+  document.getElementById('btn-start').disabled = pick.length!==3;
+  syn = activeSynergy(pick);
+  var b = document.getElementById('synbox');
+  if (syn && pick.length===3){ b.style.display='block'; b.innerHTML='✨ <b>Sinergi '+syn.nm+'</b> — '+syn.desc; }
+  else b.style.display='none';
+}
+function mkFighter(base, isFoe, scale){
+  var s = scale||1;
+  return { id:base.id||base[0], nm:base.nm||base[0], ava:base.ava||base[1], el:base.el||base[2],
+    maxhp:Math.round((base.hp||base[3])*s), hp:Math.round((base.hp||base[3])*s),
+    atk:Math.round((base.atk||base[4])*s), def:base.def||base[5], agi:base.agi||base[6],
+    skill:base.skill||'Jurus Bayangan', ult:base.ult||'Jurus Terlarang', sm:base.sm||1.7, um:base.um||3.0,
+    heal:!!base.heal, ck:40, defUp:false, foe:isFoe };
+}
+function elMul(a, d){ if (BEATS[a]===d) return 1.25; if (BEATS[d]===a) return 0.85; return 1; }
+function dmg(attacker, target, mul){
+  var raw = attacker.atk * mul * elMul(attacker.el, target.el) * (0.9 + Math.random()*0.25);
+  var mit = target.def * (target.defUp ? 1.6 : 1);
+  return Math.max(5, Math.round(raw - mit*0.55));
+}
+function log(msg, cls){
+  var L = document.getElementById('log'); var d = document.createElement('div');
+  if (cls) d.className = cls; d.textContent = msg; L.appendChild(d); L.scrollTop = L.scrollHeight;
+}
+function render(){
+  document.getElementById('stage-num').textContent = stageIdx+1;
+  document.getElementById('stage-name').textContent = STAGES[stageIdx].nm;
+  document.getElementById('score').textContent = score;
+  [['foes',foes],['allies',allies]].forEach(function(pair){
+    var box = document.getElementById(pair[0]); box.innerHTML='';
+    pair[1].forEach(function(f, idx){
+      var d = document.createElement('div'); d.className='fighter'+(f.hp<=0?' dead':''); d.id=(f.foe?'foe-':'aly-')+idx;
+      if (current===f) d.classList.add('active');
+      if (armed && f.foe && f.hp>0) d.classList.add('targetable');
+      d.innerHTML = '<div class="ava">'+f.ava+'</div><div class="nm">'+f.nm+'</div><div class="el">'+EL[f.el].e+' '+EL[f.el].n+(f.defUp?' · 🛡️':'')+'</div>'
+        + '<div class="bar hp"><i style="width:'+Math.max(0,f.hp/f.maxhp*100)+'%" class="'+(f.hp/f.maxhp<0.3?'low':'')+'"></i></div><div class="hpnum">'+Math.max(0,f.hp)+'/'+f.maxhp+' HP</div>'
+        + (f.foe?'':'<div class="bar ck"><i style="width:'+f.ck+'%"></i></div><div class="hpnum">chakra '+Math.floor(f.ck)+'</div>');
+      if (f.foe) d.onclick = function(){ if (armed && f.hp>0) doPlayerAction(armed, f); };
+      box.appendChild(d);
+    });
+  });
+  var myTurn = current && !current.foe && phase==='playing';
+  ['act-atk','act-skill','act-def','act-ult'].forEach(function(id){ document.getElementById(id).disabled = !myTurn; });
+  if (myTurn){
+    document.getElementById('act-skill').disabled = current.ck < 30;
+    document.getElementById('act-ult').disabled = current.ck < 100;
+    document.getElementById('turninfo').textContent = 'Giliran ' + current.nm + ' — pilih aksi' + (armed ? ', lalu ketuk musuh' : '');
+  } else document.getElementById('turninfo').textContent = phase==='playing' ? 'Giliran musuh…' : '';
+  document.querySelectorAll('.actions button').forEach(function(b){ b.classList.remove('armed'); });
+  if (armed) document.getElementById(armed==='atk'?'act-atk':armed==='skill'?'act-skill':'act-ult').classList.add('armed');
+}
+function alive(list){ return list.filter(function(f){ return f.hp>0; }); }
+function hitFx(f){ var idx=(f.foe?foes:allies).indexOf(f); var el=document.getElementById((f.foe?'foe-':'aly-')+idx); if(el){ el.classList.add('hit'); setTimeout(function(){el.classList.remove('hit');},320);} }
+function strike(att, tgt, mul, label){
+  var d = dmg(att, tgt, mul); tgt.hp -= d; att.ck = Math.min(100, att.ck + 12); hitFx(tgt); hap(att.foe?'err':'tap');
+  log((att.foe?'':'') + att.ava + ' ' + att.nm + ' ' + label + ' → ' + tgt.nm + ': -' + d + ' HP' + (elMul(att.el,tgt.el)>1?' (elemen unggul!)':''), att.foe?'bad':'good');
+  if (tgt.hp<=0) log('💀 ' + tgt.nm + ' tumbang!', 'sys');
+}
+function nextTurn(){
+  render();
+  if (!alive(foes).length) return stageWin();
+  if (!alive(allies).length) return gameEnd(false);
+  if (!queue.length){
+    round++;
+    allies.concat(foes).forEach(function(f){ f.defUp=false; });
+    if (syn && syn.regen) alive(allies).forEach(function(f){ f.hp=Math.min(f.maxhp, f.hp+syn.regen); });
+    queue = alive(allies).concat(alive(foes)).sort(function(a,b){ return b.agi - a.agi; });
+    log('— Ronde ' + round + ' —', 'sys');
+  }
+  current = queue.shift();
+  if (current.hp<=0) return nextTurn();
+  current.ck = Math.min(100, current.ck + 15);
+  armed = null; render();
+  if (current.foe) setTimeout(enemyAct, 650);
+}
+function doPlayerAction(kind, target){
+  var me = current; armed = null;
+  if (kind==='def'){ me.defUp = true; me.ck = Math.min(100, me.ck+25); log('🛡️ ' + me.nm + ' bertahan (+25 chakra).', 'good'); return setTimeout(nextTurn, 350); }
+  if (me.heal && kind!=='atk'){
+    var tgt = alive(allies).sort(function(a,b){return a.hp/a.maxhp - b.hp/b.maxhp;})[0];
+    var amt = Math.round(me.atk * (kind==='ult'? me.um : me.sm));
+    tgt.hp = Math.min(tgt.maxhp, tgt.hp + amt); me.ck -= (kind==='ult'?100:30);
+    log('💚 ' + me.nm + ' ' + (kind==='ult'?me.ult:me.skill) + ' → ' + tgt.nm + ': +' + amt + ' HP', 'good'); hap('ok');
+    return setTimeout(nextTurn, 450);
+  }
+  if (kind==='skill'){ me.ck -= 30; strike(me, target, me.sm, '🌀 '+me.skill); }
+  else if (kind==='ult'){ me.ck -= 100; strike(me, target, me.um, '💥 '+me.ult); }
+  else strike(me, target, 1, 'menyerang');
+  if (syn && syn.backup && alive(foes).length && Math.random() < syn.backup && !backupUsed[round+'-'+me.id]){
+    backupUsed[round+'-'+me.id] = 1;
+    var t2 = alive(foes)[Math.floor(Math.random()*alive(foes).length)];
+    setTimeout(function(){ strike(me, t2, 1.4, '✨ serangan cadangan'); render(); setTimeout(nextTurn, 400); }, 420);
+    render(); return;
+  }
+  render(); setTimeout(nextTurn, 450);
+}
+function enemyAct(){
+  var me = current; if (!me || me.hp<=0) return nextTurn();
+  var targets = alive(allies); if (!targets.length) return;
+  var tgt = targets[Math.floor(Math.random()*targets.length)];
+  if (me.ck>=100){ me.ck=0; strike(me, tgt, 2.6, '💥 jurus pamungkas'); }
+  else if (me.ck>=30 && Math.random()<0.5){ me.ck-=30; strike(me, tgt, 1.6, '🌀 jurus'); }
+  else strike(me, tgt, 1, 'menyerang');
+  render(); setTimeout(nextTurn, 550);
+}
+function stageWin(){
+  var hpPct = Math.round(alive(allies).reduce(function(s,f){return s+f.hp;},0) / allies.reduce(function(s,f){return s+f.maxhp;},0) * 100);
+  var gain = 100 + hpPct + Math.max(0, 60 - round*5);
+  score += gain;
+  log('🏆 Stage ' + (stageIdx+1) + ' bersih! +' + gain + ' poin (sisa HP ' + hpPct + '%)', 'sys'); hap('ok');
+  if (stageIdx >= STAGES.length-1) return gameEnd(true);
+  stageIdx++;
+  allies.forEach(function(f){ if (f.hp>0) f.hp = Math.min(f.maxhp, f.hp + Math.round(f.maxhp*0.3)); });
+  foes = STAGES[stageIdx].foes.map(function(x){ return mkFighter(x, true, 1); });
+  round = 0; queue = [];
+  render(); log('➡️ Stage ' + (stageIdx+1) + ': ' + STAGES[stageIdx].nm + ' — tim pulih 30%.', 'sys');
+  setTimeout(nextTurn, 700);
+}
+function gameEnd(won){
+  phase = won ? 'won' : 'lost';
+  if (!won) score = Math.round(score * 0.7);
+  render();
+  document.getElementById('screen-battle').classList.add('hidden');
+  document.getElementById('screen-end').classList.remove('hidden');
+  document.getElementById('end-emoji').textContent = won ? '🏆' : '💀';
+  document.getElementById('end-title').textContent = won ? 'Semua Stage Tuntas!' : 'Tim Tumbang di Stage ' + (stageIdx+1);
+  document.getElementById('end-desc').textContent = 'Skor akhir: ' + score + ' poin · ' + round + ' ronde di stage terakhir' + (syn ? ' · Sinergi: ' + syn.nm : '');
+  if (tg && !sentEnd){ sentEnd = true; document.getElementById('tg-banner').style.display='block';
+    try { tg.sendData(JSON.stringify({ game:'ninja-era', score:score, phase:phase })); } catch(e){} }
+  hap(won?'ok':'err');
+}
+document.getElementById('act-atk').onclick = function(){ armed = armed==='atk'?null:'atk'; render(); };
+document.getElementById('act-skill').onclick = function(){ if (current && current.heal) return doPlayerAction('skill'); armed = armed==='skill'?null:'skill'; render(); };
+document.getElementById('act-ult').onclick = function(){ if (current && current.heal) return doPlayerAction('ult'); armed = armed==='ult'?null:'ult'; render(); };
+document.getElementById('act-def').onclick = function(){ doPlayerAction('def'); };
+document.getElementById('btn-start').onclick = function(){
+  allies = pick.map(function(id){ var b = ROSTER.filter(function(r){return r.id===id;})[0]; var f = mkFighter(b, false, 1); if (syn && syn.atkMul) f.atk = Math.round(f.atk*syn.atkMul); return f; });
+  foes = STAGES[0].foes.map(function(x){ return mkFighter(x, true, 1); });
+  stageIdx = 0; score = 0; round = 0; queue = []; sentEnd = false; backupUsed = {}; phase = 'playing';
+  document.getElementById('screen-pick').classList.add('hidden');
+  document.getElementById('screen-end').classList.add('hidden');
+  document.getElementById('screen-battle').classList.remove('hidden');
+  document.getElementById('log').innerHTML = '';
+  log('⚔️ Pertarungan dimulai! Ketuk Serang/Jurus, lalu ketuk musuh.', 'sys');
+  if (syn) log('✨ Sinergi aktif: ' + syn.nm, 'sys');
+  nextTurn();
+};
+document.getElementById('btn-again').onclick = function(){
+  phase = 'title'; pick = [];
+  document.querySelectorAll('.card').forEach(function(c){ c.classList.remove('sel'); });
+  refreshPick();
+  document.getElementById('screen-end').classList.add('hidden');
+  document.getElementById('screen-pick').classList.remove('hidden');
+};
+refreshPick();
+</script>
+</body>
+</html>

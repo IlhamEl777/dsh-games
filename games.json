@@ -13,6 +13,15 @@
       "dimension": "2d",
       "orientation": "portrait",
       "publishedAt": "2026-11-20T09:21:10.693Z"
+    },
+    {
+      "slug": "ninja-era",
+      "title": "Ninja Era — Arena Telegram",
+      "url": "ninja-era/",
+      "cover": "ninja-era/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-20T15:30:00.000Z"
     }
   ],
   "wall": null
