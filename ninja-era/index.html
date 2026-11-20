@@ -32,7 +32,30 @@ button:disabled{opacity:.38;cursor:default}
 .fighter .ava{font-size:32px}
 .fighter .nm{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden}
 .fighter .el{font-size:10px;color:var(--mut)}
-.fighter.dead{opacity:.35;filter:grayscale(1)}
+.fighter.dead{opacity:.35;filter:grayscale(1);transform:rotate(-8deg) translateY(6px)}
+.fighter{animation:enter .35s ease-out}
+@keyframes enter{from{opacity:0;transform:translateY(14px) scale(.92)}to{opacity:1}}
+.fighter .ava{display:inline-block;animation:bob 1.7s ease-in-out infinite}
+.team .fighter:nth-child(2) .ava{animation-delay:.35s}.team .fighter:nth-child(3) .ava{animation-delay:.7s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.fighter.dash-up{animation:dashUp .38s ease-in-out}
+.fighter.dash-down{animation:dashDown .38s ease-in-out}
+@keyframes dashUp{0%{transform:translateY(0)}45%{transform:translateY(-64px) scale(1.12)}100%{transform:translateY(0)}}
+@keyframes dashDown{0%{transform:translateY(0)}45%{transform:translateY(64px) scale(1.12)}100%{transform:translateY(0)}}
+.dmgnum{position:absolute;left:50%;top:6px;transform:translateX(-50%);font-weight:800;font-size:17px;color:#ffd34d;text-shadow:0 2px 6px #000;animation:floatUp .95s ease-out forwards;pointer-events:none;z-index:5;white-space:nowrap}
+.dmgnum.adv{color:#ff9d3c;font-size:20px}.dmgnum.heal{color:#4ade80}
+@keyframes floatUp{0%{opacity:0;margin-top:10px}15%{opacity:1}100%{opacity:0;margin-top:-26px}}
+.fx{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:44px;pointer-events:none;z-index:4;animation:fxPop .55s ease-out forwards}
+.fx.big{font-size:64px;animation:fxPop .8s ease-out forwards}
+@keyframes fxPop{0%{opacity:0;transform:scale(.3) rotate(-30deg)}35%{opacity:1;transform:scale(1.25) rotate(8deg)}100%{opacity:0;transform:scale(1.6) rotate(0deg)}}
+.fx.spin{animation:fxSpin .6s linear forwards}
+@keyframes fxSpin{0%{opacity:0;transform:scale(.4) rotate(0deg)}30%{opacity:1}100%{opacity:0;transform:scale(1.5) rotate(340deg)}}
+#flash{position:fixed;inset:0;background:#fff8e0;opacity:0;pointer-events:none;z-index:50}
+#flash.on{animation:flashA .45s ease-out}
+@keyframes flashA{0%{opacity:0}20%{opacity:.55}100%{opacity:0}}
+.shakebig{animation:shakeB .4s}
+@keyframes shakeB{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.shieldring{position:absolute;inset:-3px;border:2px dashed #53b6ff;border-radius:16px;animation:fxPop .5s ease-out;pointer-events:none}
 .fighter.active{border-color:var(--acc)}
 .fighter.targetable{border-color:var(--red);animation:pulse 0.8s infinite}
 .fighter.hit{animation:shake .3s}
@@ -79,7 +102,9 @@ button:disabled{opacity:.38;cursor:default}
   <div class="team" id="foes"></div>
   <div class="vs">— VS —</div>
   <div class="team" id="allies"></div>
+  <div id="flash"></div>
   <div class="turninfo" id="turninfo"></div>
+  <div style="text-align:center;margin-bottom:6px"><button id="btn-auto" style="font-size:12px;padding:6px 14px">▶️ Auto: MATI — ketuk untuk mode otomatis seperti APK</button></div>
   <div class="actions">
     <button id="act-atk">🗡️ Serang<small>target: ketuk musuh</small></button>
     <button id="act-skill">🌀 Jurus<small>30 chakra</small></button>
@@ -140,6 +165,10 @@ var score = 0, stageIdx = 0, round = 0, sentEnd = false;
 var allies = [], foes = [], queue = [], current = null, armed = null, syn = null, backupUsed = {};
 window.__gameState = function(){ return { game:'ninja-era', phase:phase, score:score, stage:stageIdx+1, round:round }; };
 
+var pendingFx = {}, pendingFlash = false, autoMode = false;
+function fxKey(f){ return (f.foe?'foe-':'aly-') + (f.foe?foes:allies).indexOf(f); }
+function queueFx(f, fx){ var k = fxKey(f); (pendingFx[k] = pendingFx[k] || []).push(fx); }
+var ELFX = {api:'🔥', angin:'🌀', petir:'⚡', tanah:'🪨', air:'💦'};
 var pick = [];
 var rosterEl = document.getElementById('roster');
 ROSTER.forEach(function(r){
@@ -192,6 +221,14 @@ function render(){
         + '<div class="bar hp"><i style="width:'+Math.max(0,f.hp/f.maxhp*100)+'%" class="'+(f.hp/f.maxhp<0.3?'low':'')+'"></i></div><div class="hpnum">'+Math.max(0,f.hp)+'/'+f.maxhp+' HP</div>'
         + (f.foe?'':'<div class="bar ck"><i style="width:'+f.ck+'%"></i></div><div class="hpnum">chakra '+Math.floor(f.ck)+'</div>');
       if (f.foe) d.onclick = function(){ if (armed && f.hp>0) doPlayerAction(armed, f); };
+      var q = pendingFx[(f.foe?'foe-':'aly-')+idx];
+      if (q){ q.forEach(function(x){
+        if (x.t==='dmg'){ var s=document.createElement('span'); s.className='dmgnum'+(x.adv?' adv':'')+(x.heal?' heal':''); s.textContent=x.v; d.appendChild(s); }
+        if (x.t==='fx'){ var s2=document.createElement('span'); s2.className='fx'+(x.big?' big':'')+(x.spin?' spin':''); s2.textContent=x.v; d.appendChild(s2); }
+        if (x.t==='shake'){ d.classList.add('hit'); }
+        if (x.t==='dash'){ d.classList.add(f.foe?'dash-down':'dash-up'); }
+        if (x.t==='shield'){ var s3=document.createElement('span'); s3.className='shieldring'; d.appendChild(s3); }
+      }); }
       box.appendChild(d);
     });
   });
@@ -204,12 +241,20 @@ function render(){
   } else document.getElementById('turninfo').textContent = phase==='playing' ? 'Giliran musuh…' : '';
   document.querySelectorAll('.actions button').forEach(function(b){ b.classList.remove('armed'); });
   if (armed) document.getElementById(armed==='atk'?'act-atk':armed==='skill'?'act-skill':'act-ult').classList.add('armed');
+  flushFx();
 }
 function alive(list){ return list.filter(function(f){ return f.hp>0; }); }
+function flushFx(){ pendingFx = {}; if (pendingFlash){ pendingFlash=false; var fl=document.getElementById('flash'); fl.classList.remove('on'); void fl.offsetWidth; fl.classList.add('on'); var sb=document.getElementById('screen-battle'); sb.classList.remove('shakebig'); void sb.offsetWidth; sb.classList.add('shakebig'); } }
 function hitFx(f){ var idx=(f.foe?foes:allies).indexOf(f); var el=document.getElementById((f.foe?'foe-':'aly-')+idx); if(el){ el.classList.add('hit'); setTimeout(function(){el.classList.remove('hit');},320);} }
 function strike(att, tgt, mul, label){
-  var d = dmg(att, tgt, mul); tgt.hp -= d; att.ck = Math.min(100, att.ck + 12); hitFx(tgt); hap(att.foe?'err':'tap');
-  log((att.foe?'':'') + att.ava + ' ' + att.nm + ' ' + label + ' → ' + tgt.nm + ': -' + d + ' HP' + (elMul(att.el,tgt.el)>1?' (elemen unggul!)':''), att.foe?'bad':'good');
+  var isUlt = label.indexOf('💥')>=0, isSkill = label.indexOf('🌀')>=0;
+  var d = dmg(att, tgt, mul); tgt.hp -= d; att.ck = Math.min(100, att.ck + 12); hap(att.foe?'err':'tap');
+  queueFx(att, {t:'dash'});
+  queueFx(tgt, {t:'shake'});
+  queueFx(tgt, {t:'fx', v:ELFX[att.el], big:isUlt, spin:(att.el==='angin')});
+  if (isUlt) pendingFlash = true;
+  queueFx(tgt, {t:'dmg', v:'-'+d, adv:elMul(att.el,tgt.el)>1});
+  log(att.ava + ' ' + att.nm + ' ' + label + ' → ' + tgt.nm + ': -' + d + ' HP' + (elMul(att.el,tgt.el)>1?' (elemen unggul!)':''), att.foe?'bad':'good');
   if (tgt.hp<=0) log('💀 ' + tgt.nm + ' tumbang!', 'sys');
 }
 function nextTurn(){
@@ -227,17 +272,18 @@ function nextTurn(){
   if (current.hp<=0) return nextTurn();
   current.ck = Math.min(100, current.ck + 15);
   armed = null; render();
-  if (current.foe) setTimeout(enemyAct, 650);
+  if (current.foe) setTimeout(enemyAct, 800); else if (autoMode) setTimeout(autoAct, 700);
 }
 function doPlayerAction(kind, target){
   var me = current; armed = null;
-  if (kind==='def'){ me.defUp = true; me.ck = Math.min(100, me.ck+25); log('🛡️ ' + me.nm + ' bertahan (+25 chakra).', 'good'); return setTimeout(nextTurn, 350); }
+  if (kind==='def'){ me.defUp = true; me.ck = Math.min(100, me.ck+25); queueFx(me, {t:'shield'}); log('🛡️ ' + me.nm + ' bertahan (+25 chakra).', 'good'); render(); return setTimeout(nextTurn, 650); }
   if (me.heal && kind!=='atk'){
     var tgt = alive(allies).sort(function(a,b){return a.hp/a.maxhp - b.hp/b.maxhp;})[0];
     var amt = Math.round(me.atk * (kind==='ult'? me.um : me.sm));
     tgt.hp = Math.min(tgt.maxhp, tgt.hp + amt); me.ck -= (kind==='ult'?100:30);
+    queueFx(tgt, {t:'fx', v:'✨', big:(kind==='ult')}); queueFx(tgt, {t:'dmg', v:'+'+amt, heal:true}); if (kind==='ult') pendingFlash = true;
     log('💚 ' + me.nm + ' ' + (kind==='ult'?me.ult:me.skill) + ' → ' + tgt.nm + ': +' + amt + ' HP', 'good'); hap('ok');
-    return setTimeout(nextTurn, 450);
+    return setTimeout(nextTurn, 850);
   }
   if (kind==='skill'){ me.ck -= 30; strike(me, target, me.sm, '🌀 '+me.skill); }
   else if (kind==='ult'){ me.ck -= 100; strike(me, target, me.um, '💥 '+me.ult); }
@@ -245,10 +291,10 @@ function doPlayerAction(kind, target){
   if (syn && syn.backup && alive(foes).length && Math.random() < syn.backup && !backupUsed[round+'-'+me.id]){
     backupUsed[round+'-'+me.id] = 1;
     var t2 = alive(foes)[Math.floor(Math.random()*alive(foes).length)];
-    setTimeout(function(){ strike(me, t2, 1.4, '✨ serangan cadangan'); render(); setTimeout(nextTurn, 400); }, 420);
+    setTimeout(function(){ strike(me, t2, 1.4, '✨ serangan cadangan'); render(); setTimeout(nextTurn, 900); }, 500);
     render(); return;
   }
-  render(); setTimeout(nextTurn, 450);
+  render(); setTimeout(nextTurn, 950);
 }
 function enemyAct(){
   var me = current; if (!me || me.hp<=0) return nextTurn();
@@ -257,7 +303,7 @@ function enemyAct(){
   if (me.ck>=100){ me.ck=0; strike(me, tgt, 2.6, '💥 jurus pamungkas'); }
   else if (me.ck>=30 && Math.random()<0.5){ me.ck-=30; strike(me, tgt, 1.6, '🌀 jurus'); }
   else strike(me, tgt, 1, 'menyerang');
-  render(); setTimeout(nextTurn, 550);
+  render(); setTimeout(nextTurn, 1000);
 }
 function stageWin(){
   var hpPct = Math.round(alive(allies).reduce(function(s,f){return s+f.hp;},0) / allies.reduce(function(s,f){return s+f.maxhp;},0) * 100);
@@ -285,6 +331,22 @@ function gameEnd(won){
     try { tg.sendData(JSON.stringify({ game:'ninja-era', score:score, phase:phase })); } catch(e){} }
   hap(won?'ok':'err');
 }
+function autoAct(){
+  if (!autoMode || phase!=='playing' || !current || current.foe) return;
+  var me = current;
+  if (me.heal && me.ck>=30 && alive(allies).some(function(f){return f.hp/f.maxhp<0.65;})) return doPlayerAction('skill');
+  var targets = alive(foes); if (!targets.length) return;
+  var tgt = targets[Math.floor(Math.random()*targets.length)];
+  if (me.ck>=100) return doPlayerAction('ult', tgt);
+  if (me.ck>=30 && Math.random()<0.6) return doPlayerAction('skill', tgt);
+  if (me.hp/me.maxhp<0.25 && Math.random()<0.3) return doPlayerAction('def');
+  return doPlayerAction('atk', tgt);
+}
+document.getElementById('btn-auto').onclick = function(){
+  autoMode = !autoMode; hap('tap');
+  this.textContent = autoMode ? '⏸️ Auto: NYALA — battle jalan sendiri seperti APK (ketuk untuk manual)' : '▶️ Auto: MATI — ketuk untuk mode otomatis seperti APK';
+  if (autoMode && current && !current.foe && phase==='playing') setTimeout(autoAct, 400);
+};
 document.getElementById('act-atk').onclick = function(){ armed = armed==='atk'?null:'atk'; render(); };
 document.getElementById('act-skill').onclick = function(){ if (current && current.heal) return doPlayerAction('skill'); armed = armed==='skill'?null:'skill'; render(); };
 document.getElementById('act-ult').onclick = function(){ if (current && current.heal) return doPlayerAction('ult'); armed = armed==='ult'?null:'ult'; render(); };
