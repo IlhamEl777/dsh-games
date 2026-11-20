@@ -754,6 +754,13 @@
       ctx.fillStyle = '#ffe9a8';
       fitFont(TITLE, 54 * s, maxW, 'bold');
       ctx.fillText(TITLE, cssW / 2, cssH * 0.34);
+      // Telegram personalization: the WebApp adapter sets window.__TG_USER.
+      var tgUser = (typeof window !== 'undefined' && window.__TG_USER) || null;
+      if (tgUser && tgUser.first_name) {
+        ctx.fillStyle = '#ffd66b';
+        fitFont('Halo, ' + tgUser.first_name + '!', 26 * s, maxW, 'bold');
+        ctx.fillText('Halo, ' + tgUser.first_name + '!', cssW / 2, cssH * 0.405);
+      }
       ctx.fillStyle = '#ffffff';
       fitFont('Kumpulkan lentera, hindari monster duri!', 24 * s, maxW);
       ctx.fillText('Kumpulkan lentera, hindari monster duri!', cssW / 2, cssH * 0.46);
@@ -978,6 +985,9 @@
 (function () {
   var tg = window.Telegram && window.Telegram.WebApp;
   if (!tg) return;
+  try {
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) window.__TG_USER = tg.initDataUnsafe.user;
+  } catch (e) {}
   try {
     tg.ready();
     tg.expand();
