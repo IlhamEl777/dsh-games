@@ -1,0 +1,16 @@
+{
+  "tool": "dsh-game-studio",
+  "version": 1,
+  "games": {
+    "pemburu-lentera": {
+      "title": "Pemburu Lentera",
+      "source": "08f3458f1e00c55a",
+      "publishedAt": "2026-11-20T09:21:10.693Z",
+      "buildId": "f1a5521b7a47",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "cover": "pemburu-lentera/cover.jpg"
+    }
+  },
+  "wall": null
+}

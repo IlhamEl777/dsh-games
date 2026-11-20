@@ -1,0 +1,19 @@
+{
+  "format": "dsh-games-feed",
+  "version": 1,
+  "name": "IlhamEl777's games",
+  "author": "IlhamEl777",
+  "updatedAt": "2026-11-20T09:21:10.693Z",
+  "games": [
+    {
+      "slug": "pemburu-lentera",
+      "title": "Pemburu Lentera",
+      "url": "pemburu-lentera/",
+      "cover": "pemburu-lentera/cover.jpg",
+      "dimension": "2d",
+      "orientation": "portrait",
+      "publishedAt": "2026-11-20T09:21:10.693Z"
+    }
+  ],
+  "wall": null
+}
