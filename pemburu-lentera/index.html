@@ -981,6 +981,7 @@
 })();
 </script>
 
+<div id="tg-score-banner" style="display:none;position:fixed;left:12px;right:12px;bottom:14px;z-index:10;background:rgba(10,20,12,.92);color:#ffe9a8;border:1px solid #ffd66b;border-radius:12px;padding:10px 14px;font:600 14px/1.45 system-ui,sans-serif;text-align:center">🏆 Skor dikirim ke bot — cek /leaderboard di @pemburu_lentera_bot.<br><span style="color:#d6f0d0;font-weight:400">Tidak muncul? Artinya game ini dibuka bukan dari tombol 🏮 di /start — skor hanya tersinkron dari tombol itu.</span></div>
 <script>
 (function () {
   var tg = window.Telegram && window.Telegram.WebApp;
@@ -1011,6 +1012,8 @@
       }
       lastHearts = s.hearts;
     }
+    var banner = document.getElementById('tg-score-banner');
+    if (banner) banner.style.display = (s.phase === 'won' || s.phase === 'lost') ? 'block' : 'none';
     if (s.phase !== lastPhase) {
       if ((s.phase === 'won' || s.phase === 'lost') && !sentForPhase) {
         sentForPhase = true;
