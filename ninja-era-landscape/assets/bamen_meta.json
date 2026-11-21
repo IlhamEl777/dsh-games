@@ -1,0 +1,53 @@
+{
+ "source": "bamen",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "bamen": {
+   "file": "bamen_bamen.webp",
+   "cell": [
+    86,
+    69
+   ],
+   "frames": 7,
+   "unique": 7,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ]
+   ],
+   "cols": 7,
+   "rows": 1,
+   "origin": [
+    42,
+    64
+   ],
+   "source_dr": 13
+  }
+ }
+}

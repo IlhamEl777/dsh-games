@@ -1,0 +1,53 @@
+{
+ "source": "baozha2",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "baozha2": {
+   "file": "baozha2_baozha2.webp",
+   "cell": [
+    630,
+    393
+   ],
+   "frames": 11,
+   "unique": 7,
+   "timeline": [
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ]
+   ],
+   "cols": 7,
+   "rows": 1,
+   "origin": [
+    315,
+    228
+   ],
+   "source_dr": 22
+  }
+ }
+}

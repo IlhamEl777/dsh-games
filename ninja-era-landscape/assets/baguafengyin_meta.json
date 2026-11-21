@@ -1,0 +1,41 @@
+{
+ "source": "baguafengyin",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "baguafengyin": {
+   "file": "baguafengyin_baguafengyin.webp",
+   "cell": [
+    122,
+    98
+   ],
+   "frames": 7,
+   "unique": 3,
+   "timeline": [
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "cols": 3,
+   "rows": 1,
+   "origin": [
+    59,
+    91
+   ],
+   "source_dr": 13
+  }
+ }
+}

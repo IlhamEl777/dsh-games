@@ -1,0 +1,41 @@
+{
+ "source": "ceti",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "ceti": {
+   "file": "ceti_ceti.webp",
+   "cell": [
+    408,
+    124
+   ],
+   "frames": 4,
+   "unique": 4,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ]
+   ],
+   "cols": 4,
+   "rows": 1,
+   "origin": [
+    93,
+    124
+   ],
+   "source_dr": 7
+  }
+ }
+}
