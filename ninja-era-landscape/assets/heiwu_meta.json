@@ -1,0 +1,61 @@
+{
+ "source": "heiwu",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "heiwu": {
+   "file": "heiwu_heiwu.webp",
+   "cell": [
+    279,
+    270
+   ],
+   "frames": 13,
+   "unique": 9,
+   "timeline": [
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     2
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ]
+   ],
+   "cols": 8,
+   "rows": 2,
+   "origin": [
+    139,
+    135
+   ],
+   "source_dr": 25
+  }
+ }
+}
