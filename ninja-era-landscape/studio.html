@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Studio Skill — Ninja Era Landscape (KARANTINA LOKAL)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d1220;--panel:#182036;--panel2:#1f2947;--line:#33406b;--txt:#eef1ff;--mut:#9aa7cf;--acc:#ffb340;--red:#ff5d5d;--grn:#4ade80;--blu:#53b6ff}
+html,body{height:100%}
+body{background:#05070d;color:var(--txt);font:15px/1.45 system-ui,-apple-system,sans-serif;overflow:hidden}
+button{font:inherit;color:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.38;cursor:default}
+button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;border:none;font-weight:700;padding:13px 26px;font-size:16px}
+.hidden{display:none!important}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+#topbar{display:flex;align-items:center;gap:14px;padding:6px 14px;background:#0a0e1a;border-bottom:1px solid var(--line);font-size:13px;color:var(--mut);flex:0 0 auto;z-index:30}
+#topbar b{color:var(--txt)}
+#topbar .sp{flex:1}
+#topbar button{padding:5px 12px;font-size:12px;border-radius:99px}
+#main{flex:1;display:flex;min-height:0}
+#stagewrap{flex:1;display:flex;align-items:center;justify-content:center;background:#000;min-width:0}
+#stage{position:relative;width:100%;aspect-ratio:16/9;max-height:100%;overflow:hidden;background:#111 center/cover no-repeat}
+@media (min-aspect-ratio:16/9){#stage{width:auto;height:100%}}
+#logpane{flex:0 0 250px;display:flex;flex-direction:column;background:#0a0e1a;border-left:1px solid var(--line)}
+#logpane h3{font-size:12px;color:var(--mut);padding:8px 10px 4px;letter-spacing:1px}
+#log{flex:1;overflow-y:auto;padding:2px 10px 10px;font-size:12.5px;color:#c9d2f2}
+#log div{margin-bottom:3px}
+#log .good{color:#b9f4c9}#log .bad{color:#ffb3b3}#log .sys{color:var(--acc)}
+@media (max-width:760px){#logpane{display:none}}
+/* ===== HUD duel ala video ===== */
+#hud{position:absolute;top:10px;left:12px;right:12px;display:flex;align-items:flex-start;z-index:12;pointer-events:none}
+.hudside{display:flex;align-items:center;gap:8px;flex:1}
+.hudside.right{flex-direction:row-reverse;text-align:right}
+.hudface{width:56px;height:56px;border-radius:10px;border:2px solid #ffb340;background:#0a0e1a;object-fit:cover;box-shadow:0 2px 10px rgba(0,0,0,.6)}
+.hudside.right .hudface{border-color:#ff5d5d}
+.hudinfo{min-width:0}
+.hudnm{font-weight:800;font-size:15px;text-shadow:0 1px 4px #000,0 0 10px #000;white-space:nowrap}
+.hudbar{width:min(240px,26vw);height:13px;background:rgba(5,8,16,.8);border:1.5px solid rgba(255,255,255,.55);border-radius:99px;overflow:hidden;margin-top:3px}
+.hudbar i{display:block;height:100%;background:linear-gradient(180deg,#ff7a5c,#e0331f);transition:width .35s}
+.hudck{height:6px;margin-top:3px}
+.hudck i{background:linear-gradient(180deg,#7cc7ff,#2277dd)}
+.hudteam{display:flex;gap:3px;margin-top:4px}
+.hudside.right .hudteam{flex-direction:row-reverse}
+.hudteam .ti{position:relative;width:24px;height:24px}
+.hudteam .ti img{width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,.4);object-fit:cover}
+.hudteam .ti.dead img{filter:grayscale(1);opacity:.45}
+.hudteam .ti.dead::after{content:'✕';position:absolute;inset:0;color:#ff5d5d;font-weight:900;font-size:15px;text-align:center;line-height:24px;text-shadow:0 0 4px #000}
+#vsbadge{flex:0 0 auto;width:52px;height:52px;margin:0 10px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#ffd34d,#f08c1a 55%,#c33d12);border:2px solid #ffe9b0;display:flex;align-items:center;justify-content:center;font-weight:900;font-style:italic;font-size:19px;color:#5c1800;text-shadow:0 1px 0 #ffe9b0;box-shadow:0 0 18px rgba(240,140,26,.55);transform:rotate(-6deg)}
+/* ===== entitas petarung ===== */
+.ent{position:absolute;width:0;height:0;z-index:5}
+.ent canvas{position:absolute;pointer-events:none}
+.ent .minibar{position:absolute;left:-27px;top:9px;width:54px;height:6px;background:rgba(5,8,16,.75);border:1px solid rgba(255,255,255,.35);border-radius:99px;overflow:hidden}
+.ent .minibar i{display:block;height:100%;background:var(--grn);transition:width .3s}
+.ent .minibar i.low{background:var(--red)}
+.ent.dead{opacity:.45;filter:grayscale(.9)}
+.fxcv{position:absolute;pointer-events:none;z-index:8}
+#summon{position:absolute;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s}
+#summon.on{opacity:1}
+/* ===== lencana damage starburst ===== */
+.badge{position:absolute;transform:translateX(-50%);z-index:22;pointer-events:none;width:74px;height:74px;display:flex;align-items:center;justify-content:center;animation:badgePop .95s ease-out forwards}
+.badge::before{content:'';position:absolute;inset:0;background:radial-gradient(circle,#ffe066 20%,#ffb340 55%,#f06423);filter:drop-shadow(0 2px 5px rgba(0,0,0,.65));clip-path:polygon(50% 0%,59% 12%,72% 4%,76% 17%,90% 13%,90% 27%,100% 30%,95% 42%,100% 50%,94% 59%,99% 70%,87% 73%,86% 87%,74% 84%,69% 97%,58% 88%,50% 100%,42% 88%,31% 97%,26% 84%,13% 87%,14% 73%,1% 70%,6% 59%,0% 50%,5% 42%,0% 30%,10% 27%,10% 13%,24% 17%,28% 4%,41% 12%)}
+.badge b{position:relative;font-size:21px;color:#7a1503;text-shadow:0 1px 0 #ffe9b0}
+.badge.heal::before{background:radial-gradient(circle,#c9f7d4 20%,#4ade80 60%,#1d9e57)}
+.badge.heal b{color:#063d1e;text-shadow:0 1px 0 #d8ffe4}
+@keyframes badgePop{0%{opacity:0;transform:translateX(-50%) scale(.3) rotate(-14deg)}18%{opacity:1;transform:translateX(-50%) scale(1.18) rotate(4deg)}35%{transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(1.05) translateY(-30px)}}
+/* ===== pengumuman jurus ===== */
+#callout{position:absolute;left:0;right:0;top:34%;text-align:center;z-index:18;pointer-events:none;opacity:0}
+#callout.on{animation:callA 1.5s ease-out forwards}
+#callout .skill{font-size:clamp(26px,4.6vw,46px);font-weight:900;font-style:italic;letter-spacing:1px;background:linear-gradient(180deg,#fff3c4,#ffb340 60%,#f06423);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(90,20,0,.85)) drop-shadow(0 0 16px rgba(240,140,26,.5))}
+#callout .who{font-size:14px;color:#fff;text-shadow:0 2px 6px #000;font-weight:700;margin-top:2px}
+@keyframes callA{0%{opacity:0;transform:scale(.7)}12%{opacity:1;transform:scale(1.06)}20%{transform:scale(1)}78%{opacity:1}100%{opacity:0;transform:scale(1.02)}}
+#flash{position:absolute;inset:0;background:#fff8e0;opacity:0;pointer-events:none;z-index:40}
+#flash.on{animation:flashA .45s ease-out}
+@keyframes flashA{0%{opacity:0}20%{opacity:.5}100%{opacity:0}}
+#stage.shake{animation:shk .4s}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+/* ===== dialog visual novel ===== */
+#dialogue{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-end}
+#dialogue .dim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,6,12,.12) 55%,rgba(4,6,12,.55))}
+#dlg-box{position:relative;left:0;right:0;width:100%;display:flex;gap:14px;align-items:flex-end;padding:0 22px 18px}
+#dlg-face{flex:0 0 auto;width:138px;height:168px;object-fit:cover;object-position:top;border-radius:14px;border:2px solid #ffb340;background:#0a0e1a;box-shadow:0 6px 24px rgba(0,0,0,.6)}
+#dlg-main{flex:1;margin-left:26px;background:rgba(8,12,24,.88);border:1px solid var(--line);border-radius:14px;padding:12px 16px 10px;min-height:96px}
+#dlg-name{display:inline-block;background:linear-gradient(180deg,#ffb340,#f06423);color:#3d1002;font-weight:900;font-style:italic;padding:2px 14px;border-radius:99px;font-size:14px;margin-bottom:6px;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+#dlg-text{font-size:16.5px;line-height:1.5;text-shadow:0 1px 3px #000}
+#dlg-next{text-align:right;color:var(--acc);font-size:12.5px;margin-top:6px;animation:blink 1.1s infinite}
+@keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}
+#dlg-skip{position:absolute;top:76px;right:14px;z-index:21;background:rgba(10,14,26,.85)}
+/* ===== panel kemenangan ===== */
+#vicpanel{position:absolute;top:0;right:0;bottom:0;width:min(320px,72%);background:linear-gradient(270deg,rgba(7,10,20,.96),rgba(7,10,20,.88));border-left:2px solid #ffb340;z-index:19;padding:20px 18px;transform:translateX(105%);transition:transform .45s ease-out;display:flex;flex-direction:column}
+#vicpanel.on{transform:translateX(0)}
+#vicpanel h2{font-size:30px;font-style:italic;background:linear-gradient(180deg,#fff3c4,#ffb340 60%,#f06423);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 rgba(90,20,0,.8))}
+#vicpanel .gain{color:#b9f4c9;font-weight:700;margin:4px 0 12px}
+.vicrow{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.vicrow img{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);object-fit:cover}
+.vicrow .vn{font-size:13px;font-weight:700}
+.vicrow .vb{flex:1;height:8px;background:#0a0e1a;border:1px solid rgba(255,255,255,.25);border-radius:99px;overflow:hidden}
+.vicrow .vb i{display:block;height:100%;background:var(--grn)}
+.vicrow.dead{opacity:.45;filter:grayscale(1)}
+#vicpanel .sp2{flex:1}
+/* ===== bar kontrol battle ===== */
+#ctrlbar{flex:0 0 auto;display:flex;gap:8px;align-items:center;padding:8px 12px;background:#0a0e1a;border-top:1px solid var(--line);z-index:30}
+#turninfo{display:flex;align-items:center;font-size:13px;color:var(--acc);flex:1;min-width:0}
+#ctrlbar button{font-size:13.5px;padding:9px 18px;border-radius:99px}
+/* ===== layar pilih & akhir ===== */
+.screen{position:absolute;inset:0;z-index:15;display:flex;flex-direction:column;align-items:center;padding:18px;overflow-y:auto}
+#screen-pick{background:linear-gradient(180deg,rgba(5,8,16,.55),rgba(5,8,16,.88))}
+#screen-pick h1{font-size:30px;letter-spacing:1px;text-shadow:0 3px 12px #000}
+#screen-pick h1 .era{color:var(--acc)}
+#screen-pick .sub{color:#dbe4ff;font-size:13.5px;margin:4px 0 14px;text-shadow:0 1px 6px #000;text-align:center}
+.roster{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:1060px}
+.card{background:rgba(16,22,42,.92);border:2px solid var(--line);border-radius:14px;padding:10px 8px 8px;width:148px;text-align:center;cursor:pointer}
+.card.sel{border-color:var(--acc);background:rgba(38,44,74,.95)}
+.card .nm{font-weight:700;font-size:14px;margin-top:2px}
+.card .cls{font-size:11px;color:var(--acc)}
+.card .el{font-size:11px;color:var(--mut)}
+.card .st{font-size:10px;color:var(--mut);margin-top:2px;line-height:1.5}
+.card .sprhost{position:relative;height:96px;display:block}
+.card .sprhost canvas{position:absolute;pointer-events:none}
+.syn{background:rgba(16,36,22,.92);border:1px solid #2c5c3a;color:#b9f4c9;border-radius:10px;padding:8px 12px;font-size:13px;margin:12px 0 4px;display:none}
+#screen-end{background:rgba(5,8,16,.72);justify-content:center;text-align:center;z-index:22}
+#screen-end .big{font-size:52px}
+#screen-end h2{margin:6px 0;font-size:26px}
+#screen-end p{color:#dbe4ff;margin-bottom:16px}
+#rotate-hint{display:none;position:fixed;inset:0;background:rgba(3,5,10,.93);z-index:99;align-items:center;justify-content:center;text-align:center;font-size:17px;padding:24px}
+@media (orientation:portrait) and (max-width:560px){#rotate-hint{display:flex}}
+/* ===== v2.6 tampilan mobile: panggung full-bleed, log jadi overlay, bar ramping ===== */
+#btn-log{display:none;position:fixed;right:10px;bottom:64px;z-index:65;border-radius:99px;padding:8px 13px;background:rgba(16,22,42,.92);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+@media (max-width:1100px), (max-height:560px){
+  #logpane{display:none}
+  #logpane.open{display:flex;position:fixed;top:0;right:0;bottom:0;width:min(300px,82vw);z-index:60;box-shadow:-8px 0 24px rgba(0,0,0,.55)}
+  #btn-log{display:block}
+  #topbar{padding:3px 10px;font-size:12px;gap:8px}
+  #topbar button{padding:3px 9px;font-size:11px}
+  #ctrlbar{padding:5px 8px;gap:6px}
+  #ctrlbar button{font-size:12px;padding:6px 12px}
+  #turninfo{font-size:12px}
+  .hudface{width:44px;height:44px}
+  .hudbar{width:min(180px,22vw)}
+  .hudnm{font-size:13px}
+  #vsbadge{width:42px;height:42px;font-size:16px;margin:0 6px}
+  .badge{width:52px;height:52px}
+  .badge b{font-size:15px}
+  #dlg-face{width:92px;height:112px}
+  #dlg-text{font-size:14.5px}
+}
+
+
+/* ===== STUDIO ===== */
+body{overflow:auto}
+#studio{display:flex;flex-direction:column;min-height:100vh}
+#shead{padding:8px 14px;background:#0a0e1a;border-bottom:1px solid var(--line);font-size:13px}
+#shead b{color:var(--acc)}
+#smain{flex:1;display:flex;min-height:0}
+#spanel{flex:0 0 300px;overflow-y:auto;background:#0a0e1a;border-right:1px solid var(--line);padding:10px}
+#spanel h3{font-size:12px;color:var(--mut);letter-spacing:1px;margin:10px 0 6px}
+#spanel button{font-size:12.5px;padding:7px 10px;border-radius:9px}
+.srow{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:13px}
+.srow .nm{flex:1;font-weight:700}
+.srow button{padding:5px 8px;font-size:12px}
+.srow .dot{width:10px;height:10px;border-radius:50%;background:#555;flex:0 0 auto}
+#scenter{flex:1;display:flex;flex-direction:column;min-width:0}
+#sstagewrap{flex:1;display:flex;align-items:center;justify-content:center;background:#000;min-height:300px}
+#sright{flex:0 0 360px;overflow-y:auto;background:#0a0e1a;border-left:1px solid var(--line);padding:10px;font-size:12.5px}
+#sright h3{font-size:12px;color:var(--mut);letter-spacing:1px;margin:10px 0 6px}
+#srcdata{white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:11.5px;color:#c9d2f2}
+#strip{width:100%;background:#111;border:1px solid var(--line);border-radius:8px}
+#trace{white-space:pre-wrap;font-family:ui-monospace,monospace;font-size:11px;color:#b9f4c9;max-height:300px;overflow-y:auto}
+#checks{font-size:12.5px;line-height:1.7}
+.ctl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+#auditlog{font-size:11.5px;color:var(--mut);white-space:pre-wrap;max-height:160px;overflow-y:auto}
+.srow button.bug{padding:5px 7px;opacity:.45}
+.srow button.bug.marked{opacity:1;background:#7a1d1d;border-color:#ff5d5d}
+.srow .dot.marked{background:#ff5d5d;box-shadow:0 0 7px #ff5d5d}
+#bugmark{width:100%;padding:11px;font-size:14px;font-weight:700;background:#7a1d1d;border:1px solid #ff5d5d;border-radius:10px}
+#bugmark.marked{background:#2c5c3a;border-color:#4ade80}
+#bugnote{width:100%;margin-top:6px;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:8px;font:inherit;font-size:12.5px}
+#buglist{font-size:12.5px;line-height:1.65}
+#buglist .bi{display:flex;gap:6px;align-items:baseline}
+#buglist .bi span{flex:1}
+#buglist .bi button{padding:2px 8px;font-size:11px}
+#bugsend{width:100%;padding:12px;font-size:14.5px;font-weight:800;background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;border:none;border-radius:10px;margin-top:8px}
+#bugreport{width:100%;margin-top:8px;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:8px;font:11.5px ui-monospace,monospace;display:none}
+#bugstatus{font-size:12px;color:var(--grn);margin-top:6px;min-height:16px}
+</style>
+</head>
+<body>
+
+<div id="studio">
+ <div id="shead">🎛️ <b>STUDIO SKILL</b> — Ninja Era Landscape · audit dua arah vs sumber APK · <span style="color:var(--mut)">karantina lokal, JANGAN dipublikasikan · game live tidak diubah dari sini</span></div>
+ <div id="smain">
+  <aside id="spanel">
+    <h3>KONTROL</h3>
+    <div class="ctl">
+      <button id="st-play">▶ Main</button>
+      <button id="st-replay">↻ Ulang</button>
+      <button id="st-slow">🐢 Slow 0.25×</button>
+      <button id="st-pause">⏸ Jeda</button>
+    </div>
+    <div class="ctl">
+      <button id="st-audit-ally">🧪 Audit kelompok sekutu (54 pemicu)</button>
+    </div>
+    <div id="auditlog"></div>
+    <h3>DAFTAR SKILL — 9 SEKUTU (basic / skill / ult)</h3>
+    <div id="skillist"></div>
+    <h3>CATATAN</h3>
+    <div style="font-size:12px;color:var(--mut);line-height:1.6">Pemicu memanggil runTurn() game persis (aiDecide dipaksa ke jurus terpilih, 1v1, target HP 5000 agar tak tumbang di tengah audit). Jejak sampel 25 ms: posisi rect nyata, animasi, HP, fx, klon. Hasil audit massal: window.__auditResults (JSON) — dipakai runner headless untuk SKILL-AUDIT.md.</div>
+  </aside>
+  <div id="scenter">
+    <div id="sstagewrap">
+      <div id="stage">
+        <canvas id="summon"></canvas>
+        <div id="hud" class="hidden">
+          <div class="hudside left"><img class="hudface" id="hud-face-l" alt=""><div class="hudinfo"><div class="hudnm" id="hud-nm-l">—</div><div class="hudbar"><i id="hud-hp-l"></i></div><div class="hudbar hudck"><i id="hud-ck-l"></i></div><div class="hudteam" id="hud-team-l"></div></div></div>
+          <div id="vsbadge">VS</div>
+          <div class="hudside right"><img class="hudface" id="hud-face-r" alt=""><div class="hudinfo"><div class="hudnm" id="hud-nm-r">—</div><div class="hudbar"><i id="hud-hp-r"></i></div><div class="hudbar hudck"><i id="hud-ck-r"></i></div><div class="hudteam" id="hud-team-r"></div></div></div>
+        </div>
+        <div id="callout"><div class="skill" id="callout-skill"></div><div class="who" id="callout-who"></div></div>
+        <div id="flash"></div>
+      </div>
+    </div>
+    <div id="ctrlbar"><div id="turninfo">Studio siap — pilih skill di panel kiri.</div></div>
+  </div>
+  <aside id="sright">
+    <h3>PANEL SUMBER (data bake APK)</h3>
+    <div id="srcdata">—</div>
+    <h3>STRIP FRAME SUMBER (frame unik animasi jurus)</h3>
+    <canvas id="strip" width="336" height="96"></canvas>
+    <h3>CEKLIS OTOMATIS (jejak terakhir)</h3>
+    <div id="checks">—</div>
+    <h3>🐛 TANDAI BUG (tersimpan di perangkat ini)</h3>
+    <button id="bugmark">🐛 Tandai pemicu ini sebagai bug</button>
+    <input id="bugnote" type="text" placeholder="Catatan bug ini (opsional) — mis. hiu-nya kebalik">
+    <div id="buglist" style="margin-top:8px"></div>
+    <button id="bugsend">📤 Kirim ke Muse (0 bug)</button>
+    <div id="bugstatus"></div>
+    <textarea id="bugreport" rows="10" readonly></textarea>
+    <div style="font-size:11.5px;color:var(--mut);margin-top:6px">Tombol Kirim menyalin laporan ke clipboard + mengunduh file .md. Tempel teksnya ke chat Muse — itu yang sampai ke Muse, karena halaman ini statis dan tidak punya jalur kirim sendiri.</div>
+    <h3>JEJAK TERUKUR</h3>
+    <div id="trace">—</div>
+  </aside>
+ </div>
+</div>
+<!-- stub elemen yang disentuh kode game warisan -->
+<div style="display:none">
+  <div id="roster"></div><div id="synbox"></div><button id="btn-start"></button>
+  <span id="tb-stage"></span><span id="tb-score"></span>
+  <aside id="logpane"><div id="log"></div></aside>
+</div>
+
+<script>
+'use strict';
+/* ===== Data — sama dengan Ninja Era portrait (mekanik APK via REA recon) ===== */
+var EL = {api:{n:'Api',e:'🔥'},angin:{n:'Angin',e:'🌪️'},petir:{n:'Petir',e:'⚡'},tanah:{n:'Tanah',e:'🪨'},air:{n:'Air',e:'💧'}};
+var BEATS = {api:'angin',angin:'petir',petir:'tanah',tanah:'air',air:'api'};
+var ROSTER = [
+ {id:'haru', nm:'Haru', ava:'🧑‍🎤', el:'angin', cls:'A', hp:320, atk:62, def:28, agi:78, skill:'Pusaran Angin', ult:'Pusaran Raksasa', sm:1.7, um:3.1, skr:'melee', ulr:'cast'},
+ {id:'ren', nm:'Ren', ava:'🥷', el:'petir', cls:'SS', hp:290, atk:74, def:24, agi:88, skill:'Pedang Kilat', ult:'Seribu Kilat', sm:1.8, um:3.3, skr:'melee', ulr:'melee'},
+ {id:'hana', nm:'Hana', ava:'👩‍⚕️', el:'air', cls:'A', hp:300, atk:50, def:26, agi:64, skill:'Sembuh Kabut', ult:'Gelombang Pulih', heal:true, sm:1.6, um:2.8, skr:'cast', ulr:'cast'},
+ {id:'kaen', nm:'Kaen', ava:'🔥', el:'api', cls:'S', hp:310, atk:70, def:27, agi:70, skill:'Bola Api', ult:'Naga Api', sm:1.75, um:3.2, skr:'cast', ulr:'cast'},
+ {id:'yuki', nm:'Yuki', ava:'🧝‍♀️', el:'air', cls:'S', hp:285, atk:66, def:25, agi:80, skill:'Jarum Es', ult:'Badai Salju', sm:1.7, um:3.0, skr:'cast', ulr:'cast'},
+ {id:'daichi', nm:'Daichi', ava:'🧔', el:'tanah', cls:'B', hp:390, atk:54, def:38, agi:48, skill:'Hantaman Batu', ult:'Gempa Bumi', sm:1.6, um:2.9, skr:'melee', ulr:'cast'},
+ {id:'akira', nm:'Akira', ava:'👤', el:'angin', cls:'SS', hp:275, atk:72, def:23, agi:92, skill:'Bayangan Kembar', ult:'Serbuan Bayangan', sm:1.85, um:3.4, skr:'melee', ulr:'melee'},
+ {id:'mika', nm:'Mika', ava:'👧', el:'air', cls:'B', hp:295, atk:48, def:25, agi:68, skill:'Tetes Pulih', ult:'Hujan Berkah', heal:true, sm:1.5, um:2.6, skr:'cast', ulr:'cast'},
+ {id:'goro', nm:'Goro', ava:'🦍', el:'tanah', cls:'A', hp:360, atk:60, def:34, agi:52, skill:'Tinju Tanah', ult:'Longsor', sm:1.65, um:3.0, skr:'melee', ulr:'cast'}
+];
+var SYNERGIES = [
+ {ids:['haru','ren','hana'], nm:'Trio Penerus', desc:'Serangan cadangan 140%: 25% peluang serangan ekstra tiap giliran.', backup:0.25},
+ {ids:['kaen','yuki','daichi'], nm:'Para Guru', desc:'ATK tim +12%.', atkMul:1.12},
+ {ids:['hana','mika','yuki'], nm:'Tim Medis', desc:'Pulih 12 HP di awal tiap ronde.', regen:12}
+];
+var STAGES = [
+ {nm:'Gerbang Desa', bg:'huoyingcun', foes:[['Bandit Kabut','🗡️','angin',180,38,16,55],['Bandit Panah','🏹','tanah',170,36,15,50],['Bandit Kapak','🪓','api',190,40,17,45]]},
+ {nm:'Hutan Bambu', bg:'jiaowai', foes:[['Penjaga Hutan','🌲','tanah',230,46,20,58],['Pemburu Senyap','🦉','angin',215,50,18,72],['Ahli Racun','🧪','air',225,48,19,60]]},
+ {nm:'Kuil Petir', bg:'rzw-dojo', foes:[['Pendekar Kilat','⚡','petir',270,56,22,80],['Raksasa Kuil','🗿','tanah',320,52,26,40],['Dukun Badai','🌩️','petir',260,58,21,76]]},
+ {nm:'Benteng Api', bg:'weishouhuodong', foes:[['Ksatria Api','🔥','api',310,62,25,66],['Pemanah Lava','🌋','api',290,64,23,70],['Tabib Abu','💧','air',300,55,24,62]]},
+ {nm:'Tahta Kage Bayangan', bg:'yinghua', foes:[['Kage Bayangan','👹','petir',430,72,28,84],['Tangan Kanan Kage','🦹','angin',350,68,26,88],['Penyihir Kegelapan','🔮','api',340,70,25,78]]}
+];
+/* Dialog pembuka tiap stage — {L} = nama pemimpin tim pemain. */
+var DIALOGUES = [
+ [ {who:'foe', text:'Heh, anak-anak ingusan mau lewat gerbang desa? Bayar dulu, atau pulang!'},
+   {who:'ally', text:'Kami tidak punya waktu untuk ini. Minggir, atau kami yang meminggirkanmu!'} ],
+ [ {who:'foe', text:'Hutan ini terlarang bagi orang luar. Putar balik selagi masih bisa.'},
+   {who:'ally', text:'Maaf, kami HARUS lewat. Jaga dirimu baik-baik!'} ],
+ [ {who:'foe', text:'Kuil ini dijaga kilat para leluhur. Langkahmu berakhir di sini.'},
+   {who:'ally', text:'Kilat atau bukan, kami terus maju!'} ],
+ [ {who:'foe', text:'Benteng api tak pernah padam. Kalian hanya akan jadi abu.'},
+   {who:'ally', text:'Panasnya belum seberapa dibanding tekad kami!'} ],
+ [ {who:'foe', text:'Akhirnya… mainan baru untuk Tahta Kage Bayangan.'},
+   {who:'ally', text:'Ini akhir pemerintahmu, Kage Bayangan!'} ]
+];
+var BODIES = { haru:'mingren', ren:'kakaxi', hana:'xiaoying', kaen:'zuozhu', yuki:'bai',
+               daichi:'zhongwu', akira:'shuimen', mika:'xianglin', goro:'dingci' };
+var FOE_BODIES = { 'Bandit Kabut':'shuimen', 'Bandit Panah':'dingci', 'Bandit Kapak':'zuozhu',
+  'Penjaga Hutan':'zhongwu', 'Pemburu Senyap':'shuimen', 'Ahli Racun':'xianglin',
+  'Pendekar Kilat':'kakaxi', 'Raksasa Kuil':'dingci', 'Dukun Badai':'zuozhu',
+  'Ksatria Api':'zuozhu', 'Pemanah Lava':'xiaoying', 'Tabib Abu':'xianglin',
+  'Kage Bayangan':'kakaxi', 'Tangan Kanan Kage':'shuimen', 'Penyihir Kegelapan':'bai' };
+/* Jangkauan jurus musuh per nama (default melee): penembak/penyihir cast di tempat. */
+var FOE_RANGE = { 'Bandit Panah':'cast', 'Dukun Badai':'cast', 'Tabib Abu':'cast',
+  'Penyihir Kegelapan':'cast', 'Pemanah Lava':'cast', 'Ahli Racun':'cast', 'Ksatria Api':'cast' };
+function rangeOf(f, kind){
+  if (f.heal) return 'cast';
+  if (!f.foe) return kind === 'ult' ? (f.ulr || 'melee') : (f.skr || 'melee');
+  return FOE_RANGE[f.nm] || 'melee';
+}
+var SIG = { mingren:['luoxuanwan_ready','luoxuanwan_hit'], kakaxi:['leiqie'],
+            xiaoying:['baoliequan'], zuozhu:['qianniao_ready','qianniao_hit'],
+            bai:['mojingbingjing'], shuimen:['feileishen'] };
+var FXBYEL = { api:'huoyan', angin:'luoxuanwan', petir:'shandian', tanah:'dilie', air:'shuijiaodan' };
+var SFXBYEL = { api:'fire01', angin:'wind01', petir:'lightning01', tanah:'stone01', air:'water03' };
+</script>
+<script>
+'use strict';
+/* ===== Audio — MP3 asli APK ===== */
+var AU = { muted:false, bgm:null, cache:{} };
+function sfx(name, vol){
+  if (AU.muted) return;
+  try {
+    var a = AU.cache[name] || (AU.cache[name] = new Audio('assets/audio/' + name + '.mp3'));
+    a.volume = vol || 0.8; a.currentTime = 0; a.play().catch(function(){});
+  } catch(e){}
+}
+function bgmStart(){
+  if (AU.bgm) return;
+  try { AU.bgm = new Audio('assets/audio/specialmusic.mp3'); AU.bgm.loop = true; AU.bgm.volume = 0.32; if (!AU.muted) AU.bgm.play().catch(function(){}); } catch(e){}
+}
+/* ===== Mesin sprite — format bake F2 (meta cell/origin/timeline dedupe) ===== */
+var SP = { meta:{}, img:{}, seq:{}, ready:false };
+/* Jam virtual: playback animasi ikut speedMul agar sinkron dengan koreografi di 2x. */
+var VT = { t:0, last:-1 };
+function vnow(){
+  var n = performance.now();
+  if (VT.last < 0) VT.last = n;
+  VT.t += (n - VT.last) * (typeof speedMul !== 'undefined' ? speedMul : 1);
+  VT.last = n;
+  return VT.t;
+}
+function spLoad(name){
+  return fetch('assets/' + name + '_meta.json').then(function(r){ return r.json(); }).then(function(m){
+    SP.meta[name] = m;
+    Object.keys(m.animations).forEach(function(an){
+      var a = m.animations[an], key = name + ':' + an;
+      var img = new Image(); img.src = 'assets/' + a.file; SP.img[key] = img;
+      if (img.decode) img.decode().then(function(){ try { var wc = document.createElement('canvas'); wc.width = wc.height = 4; wc.getContext('2d').drawImage(img, 0, 0, 4, 4); } catch(e){} }).catch(function(){}); /* pra-decode + gambar pemanasan 4x4 di layar pilih: benturan pertama tak boleh membayar decode/raster sheet besar */
+      var s = []; a.timeline.forEach(function(t){ for (var i = 0; i < t[1]; i++) s.push(t[0]); });
+      SP.seq[key] = s;
+    });
+  }).catch(function(){});
+}
+function spLoadAll(){
+  var names = {};
+  Object.keys(BODIES).forEach(function(k){ names[BODIES[k]] = 1; });
+  Object.keys(FXBYEL).forEach(function(k){ names[FXBYEL[k]] = 1; });
+  names['tianzhao'] = 1;
+  return Promise.all(Object.keys(names).map(spLoad)).then(function(){ SP.ready = true; mountPickSprites(); });
+}
+function spFrame(body, an, t0, loop){
+  var m = SP.meta[body]; if (!m) return null;
+  var a = m.animations[an]; if (!a) { an = 'daiji'; a = m.animations[an]; if (!a) return null; }
+  var seq = SP.seq[body + ':' + an]; if (!seq) return null;
+  var pos = Math.floor((vnow() - t0) * (m.fps || 12) / 1000);
+  if (pos < 0) pos = 0; /* pengaman: t0 dari jam lain tak boleh membuat sprite hilang */
+  if (pos >= seq.length) pos = loop ? pos % seq.length : seq.length - 1;
+  return { a:a, idx:seq[pos], img:SP.img[body + ':' + an] };
+}
+function drawOn(cv, fr, K, flip, groundY){
+  if (!fr || !fr.img || !fr.img.complete) return;
+  var cw = fr.a.cell[0], ch = fr.a.cell[1];
+  if (cv.width !== cw || cv.height !== ch){ cv.width = cw; cv.height = ch; }
+  cv.style.width = (cw * K) + 'px'; cv.style.height = (ch * K) + 'px';
+  cv.style.left = (-fr.a.origin[0] * K) + 'px';
+  cv.style.top = ((groundY || 0) - fr.a.origin[1] * K) + 'px';
+  var ctx = cv.getContext('2d'); ctx.clearRect(0, 0, cw, ch);
+  var sx = (fr.idx % fr.a.cols) * cw, sy = Math.floor(fr.idx / fr.a.cols) * ch;
+  if (flip){ ctx.save(); ctx.translate(cw, 0); ctx.scale(-1, 1); ctx.drawImage(fr.img, sx, sy, cw, ch, 0, 0, cw, ch); ctx.restore(); }
+  else ctx.drawImage(fr.img, sx, sy, cw, ch, 0, 0, cw, ch);
+}
+</script>
+<script>
+'use strict';
+var tg = (window.Telegram && window.Telegram.WebApp) || null;
+if (tg) { try { tg.ready(); tg.expand(); if (tg.setHeaderColor) tg.setHeaderColor('#0a0e1a'); if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); } catch(e){} }
+function hap(kind){ if(!tg) return; try{ if(kind==='err') tg.HapticFeedback.notificationOccurred('error'); else if(kind==='ok') tg.HapticFeedback.notificationOccurred('success'); else tg.HapticFeedback.impactOccurred('light'); }catch(e){} }
+
+var phase = 'title', score = 0, stageIdx = 0, round = 0;
+var allies = [], foes = [], syn = null, backupUsed = {}, pick = [];
+var speedMul = 1, battleToken = 0;
+window.__gameState = function(){ return { game:'ninja-era-landscape', phase:phase, score:score, stage:stageIdx+1, round:round, speed:speedMul }; };
+
+var stageEl = document.getElementById('stage');
+var ALLY_SLOTS = [{x:10,y:82},{x:19,y:89},{x:28,y:79}];
+var FOE_SLOTS  = [{x:90,y:82},{x:81,y:89},{x:72,y:79}];
+var ents = [], fxList = [], pickInst = [], summonState = null, cloneList = [];
+function stageH(){ return stageEl.clientHeight || 540; }
+function fighterK(){ return stageH() * 0.235 / 195; }
+function delay(ms){ return new Promise(function(res){ setTimeout(res, ms / speedMul); }); }
+function log(msg, cls){
+  var L = document.getElementById('log'); var d = document.createElement('div');
+  if (cls) d.className = cls; d.textContent = msg; L.appendChild(d); L.scrollTop = L.scrollHeight;
+}
+function refreshTop(){
+  document.getElementById('tb-stage').innerHTML = (phase !== 'title')
+    ? 'Stage <b>' + (stageIdx + 1) + '/5 — ' + STAGES[stageIdx].nm + '</b>' : 'Stage <b>—</b>';
+  document.getElementById('tb-score').textContent = score;
+}
+/* ===== pick screen ===== */
+var rosterEl = document.getElementById('roster');
+ROSTER.forEach(function(r){
+  var d = document.createElement('div'); d.className = 'card'; d.id = 'pick-' + r.id;
+  d.innerHTML = '<span class="sprhost"></span>'
+    + '<div class="nm">' + r.nm + '</div><div class="cls">Kelas ' + r.cls + ' · ' + EL[r.el].e + ' ' + EL[r.el].n + '</div>'
+    + '<div class="st">HP ' + r.hp + ' · ATK ' + r.atk + ' · DEF ' + r.def + ' · AGI ' + r.agi + '<br>🌀 ' + r.skill + '<br>💥 ' + r.ult + '</div>';
+  d.onclick = function(){
+    bgmStart(); sfx('click', 0.5);
+    var i = pick.indexOf(r.id);
+    if (i >= 0) pick.splice(i, 1); else { if (pick.length >= 3) return; pick.push(r.id); }
+    d.classList.toggle('sel', pick.indexOf(r.id) >= 0); hap('tap'); refreshPick();
+  };
+  rosterEl.appendChild(d);
+});
+function mountPickSprites(){
+  if (!SP.ready) return;
+  ROSTER.forEach(function(r){
+    var card = document.getElementById('pick-' + r.id); if (!card) return;
+    var host = card.querySelector('.sprhost'); if (!host || host.querySelector('canvas')) return;
+    var cv = document.createElement('canvas'); host.appendChild(cv);
+    pickInst.push({ cv:cv, body:BODIES[r.id], t0: vnow() + Math.random() * 900 });
+  });
+}
+function activeSynergy(ids){ for (var i = 0; i < SYNERGIES.length; i++){ var s = SYNERGIES[i]; if (s.ids.every(function(x){ return ids.indexOf(x) >= 0; })) return s; } return null; }
+function refreshPick(){
+  document.getElementById('btn-start').disabled = pick.length !== 3;
+  syn = activeSynergy(pick);
+  var b = document.getElementById('synbox');
+  if (syn && pick.length === 3){ b.style.display = 'block'; b.innerHTML = '✨ <b>Sinergi ' + syn.nm + '</b> — ' + syn.desc; }
+  else b.style.display = 'none';
+}
+/* ===== fighter & math (warisan versi portrait) ===== */
+function mkFighter(base, isFoe, scale){
+  var s = scale || 1;
+  return { id:base.id || base[0], nm:base.nm || base[0], ava:base.ava || base[1], el:base.el || base[2],
+    maxhp:Math.round((base.hp || base[3]) * s), hp:Math.round((base.hp || base[3]) * s),
+    atk:Math.round((base.atk || base[4]) * s), def:base.def || base[5], agi:base.agi || base[6],
+    skill:base.skill || 'Jurus Bayangan', ult:base.ult || 'Jurus Terlarang', sm:base.sm || 1.7, um:base.um || 3.0,
+    skr:base.skr || null, ulr:base.ulr || null,
+    heal:!!base.heal, ck:40, defUp:false, foe:isFoe, _spr:{ anim:'daiji', t0:vnow(), loop:true } };
+}
+function bodyOf(f){ return f.foe ? (FOE_BODIES[f.nm] || 'shuimen') : BODIES[f.id]; }
+function elMul(a, d){ if (BEATS[a] === d) return 1.25; if (BEATS[d] === a) return 0.85; return 1; }
+function dmgCalc(attacker, target, mul){
+  var raw = attacker.atk * mul * elMul(attacker.el, target.el) * (0.9 + Math.random() * 0.25);
+  var mit = target.def * (target.defUp ? 1.6 : 1);
+  return Math.max(5, Math.round(raw - mit * 0.55));
+}
+function alive(list){ return list.filter(function(f){ return f.hp > 0; }); }
+function setAnim(f, an, loop, chain, chainDelay){
+  f._spr = { anim:an, t0:vnow(), loop:!!loop, chain:chain || null, chainAt: chainDelay ? vnow() + chainDelay : 0 };
+}
+function playSig(f, isUlt){
+  var b = bodyOf(f), s = b && SIG[b];
+  if (!s) return setAnim(f, 'quanji', false);
+  if (s.length === 2 && isUlt) setAnim(f, s[0], false, s[1], animMs(b, s[0]));
+  else setAnim(f, s[s.length - 1], false);
+}
+/* ===== Timing asli APK — terukur dari data bake (SRC 24fps -> bake 12fps, durasi utuh) =====
+   IMPACT: ms dari awal animasi sampai frame benturan (puncak jangkauan alpha per frame).
+   FXPEAK: ms dari efek muncul sampai puncak luas visualnya. */
+var IMPACT = { 'quanji': 417, 'mingren:luoxuanwan_hit': 1000, 'kakaxi:leiqie': 583,
+  'zuozhu:qianniao_hit': 417, 'xiaoying:baoliequan': 1250, 'bai:mojingbingjing': 500,
+  'shuimen:feileishen': 833 };
+var FXPEAK = { huoyan: 417, shandian: 0, dilie: 333, shuijiaodan: 2083, tianzhao: 1667, luoxuanwan: 3917 };
+function animMs(body, an){
+  var m = SP.meta[body]; if (!m) return 1000;
+  var a = m.animations[an]; if (!a) return 1000;
+  var f = 0; a.timeline.forEach(function(t){ f += t[1]; });
+  return Math.round(f / (m.fps || 12) * 1000);
+}
+function sigInfo(f, isUlt){
+  var b = bodyOf(f), s = b && SIG[b];
+  if (!s) return { impact: IMPACT.quanji, total: animMs(b, 'quanji') };
+  if (s.length === 2 && isUlt){
+    return { impact: animMs(b, s[0]) + (IMPACT[b + ':' + s[1]] || IMPACT.quanji),
+             total: animMs(b, s[0]) + animMs(b, s[1]) };
+  }
+  var an = s[s.length - 1];
+  return { impact: IMPACT[b + ':' + an] || IMPACT.quanji, total: animMs(b, an) };
+}
+/* ===== Koreografi sumber v2.5 — animasi generik APK yang memang untuk ini =====
+   shifaAReady/shifaAHit = pasangan rapal jurus (merapal -> lepas) untuk skill cast;
+   zhiliaoshu = pose jurus penyembuh. bai dikecualikan: mojingbingjing adalah
+   animasi jurus khususnya sendiri. */
+function hasAnim(body, an){ var m = SP.meta[body]; return !!(m && m.animations[an]); }
+function useShifa(f){ var b = bodyOf(f); return b !== 'bai' && hasAnim(b, 'shifaAReady') && hasAnim(b, 'shifaAHit'); }
+function playCast(f){ var b = bodyOf(f); setAnim(f, 'shifaAReady', false, 'shifaAHit', animMs(b, 'shifaAReady')); }
+function castInfo(f){ var b = bodyOf(f); var r = animMs(b, 'shifaAReady'); return { impact: r, total: r + animMs(b, 'shifaAHit') }; }
+/* ===== entitas arena ===== */
+/* Urutan kedalaman antar-petarung dari y — WAJIB tetap di bawah dialog (z 20), panel (19), lencana (22):
+   dulu zIndex = y mentah (±72-84) sehingga petarung menggambar DI ATAS dialog. Kini dipetakan ke 5..8, fx 9 tetap di atasnya. */
+function depthZ(y){ return 5 + Math.max(0, Math.min(3, Math.round((y - 62) / 7))); }
+function makeEnt(f, slot){
+  var el = document.createElement('div');
+  el.className = 'ent' + (f.foe ? ' foe' : '');
+  el.style.left = slot.x + '%'; el.style.top = slot.y + '%'; el.style.zIndex = depthZ(slot.y);
+  var cv = document.createElement('canvas'); el.appendChild(cv);
+  var mb = document.createElement('div'); mb.className = 'minibar'; mb.innerHTML = '<i></i>';
+  el.appendChild(mb);
+  stageEl.appendChild(el);
+  var ent = { f:f, el:el, cv:cv, mb:mb.querySelector('i'), x:slot.x, y:slot.y, home:{ x:slot.x, y:slot.y }, rev:false };
+  ents.push(ent); return ent;
+}
+function entOf(f){ for (var i = 0; i < ents.length; i++) if (ents[i].f === f) return ents[i]; return null; }
+function clearEnts(){ ents.forEach(function(e){ e.el.remove(); }); ents = []; fxList.forEach(function(x){ x.cv.remove(); }); fxList = []; cloneList.forEach(function(c){ c.el.remove(); }); cloneList = []; }
+function moveEnt(ent, x, y, ms){
+  ent.x = x; ent.y = y;
+  ent.el.style.transition = 'left ' + ms + 'ms ease-in-out, top ' + ms + 'ms ease-in-out';
+  ent.el.style.left = x + '%'; ent.el.style.top = y + '%'; ent.el.style.zIndex = depthZ(y);
+}
+function refreshMinis(){
+  ents.forEach(function(e){
+    e.mb.style.width = Math.max(0, e.f.hp / e.f.maxhp * 100) + '%';
+    e.mb.className = (e.f.hp / e.f.maxhp < 0.3) ? 'low' : '';
+    e.el.classList.toggle('dead', e.f.hp <= 0);
+  });
+}
+/* ===== HUD duel ===== */
+function faceOf(f){ return 'assets/face/' + bodyOf(f) + '.png'; }
+function buildHudTeams(){
+  [['l', allies], ['r', foes]].forEach(function(pair){
+    var box = document.getElementById('hud-team-' + pair[0]); box.innerHTML = '';
+    pair[1].forEach(function(f){
+      var d = document.createElement('span'); d.className = 'ti'; d.dataset.nm = f.nm;
+      d.innerHTML = '<img src="' + faceOf(f) + '" alt="">';
+      box.appendChild(d);
+    });
+  });
+}
+function refreshHudTeams(){
+  [['l', allies], ['r', foes]].forEach(function(pair){
+    var box = document.getElementById('hud-team-' + pair[0]);
+    pair[1].forEach(function(f, i){ var d = box.children[i]; if (d) d.classList.toggle('dead', f.hp <= 0); });
+  });
+}
+function setDuel(a, b){
+  if (a){
+    var L = a.foe ? b : a, R = a.foe ? a : b;
+    if (L){ document.getElementById('hud-face-l').src = faceOf(L); document.getElementById('hud-nm-l').textContent = L.nm;
+      document.getElementById('hud-hp-l').style.width = Math.max(0, L.hp / L.maxhp * 100) + '%';
+      document.getElementById('hud-ck-l').style.width = L.ck + '%'; }
+    if (R){ document.getElementById('hud-face-r').src = faceOf(R); document.getElementById('hud-nm-r').textContent = R.nm;
+      document.getElementById('hud-hp-r').style.width = Math.max(0, R.hp / R.maxhp * 100) + '%';
+      document.getElementById('hud-ck-r').style.width = R.ck + '%'; }
+  }
+  refreshMinis(); refreshHudTeams();
+}
+/* ===== efek visual ===== */
+/* Efek proyektil: BERJALAN dari caster ke target (pola game asli), bukan muncul diam.
+   shandian (petir menyambar), dilie (tanah merekah), tianzhao (api menyala di titik pandang) tetap di tempat. */
+var TRAVEL_FX = { huoyan:1, shuijiaodan:1, luoxuanwan:1 };
+function spawnFxAt(ent, name, an, big, fromEnt, flipHint){
+  if (!SP.meta[name] || !ent) return;
+  var cv = document.createElement('canvas'); cv.className = 'fxcv'; cv.style.zIndex = 9;
+  stageEl.appendChild(cv);
+  var fx = { cv:cv, name:name, an:an, t0:vnow(), big:!!big, sx:ent.x, sy:ent.y,
+             /* luoxuanwan diam di target (benturan melee): timeline sumber 4 dtk berujung di puncak —
+                dipercepat 2,2x agar puncaknya tiba selagi penyerang masih di target. Proyektil cast tetap 1x. */
+             rate: (name === 'luoxuanwan' && !fromEnt) ? 2.2 : 1,
+             flip: fromEnt ? (fromEnt.x > ent.x) : !!flipHint };
+  if (fromEnt && TRAVEL_FX[name]){
+    var mv = Math.max(280, Math.min(850, Math.abs(ent.x - fromEnt.x) * 14));
+    if (typeof FXPEAK !== 'undefined' && FXPEAK[name]) mv = Math.min(mv, FXPEAK[name]);
+    fx.x0 = fromEnt.x; fx.y0 = fromEnt.y; fx.x1 = ent.x; fx.y1 = ent.y; fx.mv = mv;
+    fx.sx = fromEnt.x; fx.sy = fromEnt.y;
+  }
+  fxList.push(fx);
+}
+function badge(ent, txt, heal){
+  var s = document.createElement('span');
+  s.className = 'badge' + (heal ? ' heal' : '');
+  s.innerHTML = '<b>' + txt + '</b>';
+  s.style.left = ent.x + '%'; s.style.top = (ent.y - 33) + '%';
+  stageEl.appendChild(s);
+  setTimeout(function(){ s.remove(); }, 980);
+}
+function callout(who, skill){
+  var c = document.getElementById('callout');
+  document.getElementById('callout-skill').textContent = skill;
+  document.getElementById('callout-who').textContent = who;
+  c.classList.remove('on'); void c.offsetWidth; c.classList.add('on');
+}
+function flashShake(big){
+  var fl = document.getElementById('flash');
+  fl.classList.remove('on'); void fl.offsetWidth; fl.classList.add('on');
+  if (big){ stageEl.classList.remove('shake'); void stageEl.offsetWidth; stageEl.classList.add('shake'); }
+}
+function summonJiuwei(){
+  var done = function(){
+    if (!SP.meta['jiuwei']) return;
+    var cv = document.getElementById('summon');
+    summonState = { cv:cv, t0:vnow() };
+    cv.classList.add('on');
+    setTimeout(function(){ cv.classList.remove('on'); summonState = null; }, 5200 / speedMul);
+  };
+  if (SP.meta['jiuwei']) done(); else spLoad('jiuwei').then(done);
+}
+/* ===== loop gambar ===== */
+function frameFor(f){
+  var body = bodyOf(f), st = f._spr;
+  if (f.hp <= 0) return spFrame(body, 'siwang', st && st.t0 ? st.t0 : vnow(), false);
+  if (!st) return spFrame(body, 'daiji', 0, true);
+  var m = SP.meta[body]; if (!m) return null;
+  var a = m.animations[st.anim];
+  if (a){
+    var seq = SP.seq[body + ':' + st.anim];
+    var pos = Math.floor((vnow() - st.t0) * (m.fps || 12) / 1000);
+    if (st.chain && (vnow() >= st.chainAt || pos >= seq.length)){ setAnim(f, st.chain, false); return frameFor(f); }
+    if (!st.loop && pos >= seq.length && st.anim !== 'daiji'){ setAnim(f, 'daiji', true); return frameFor(f); }
+  }
+  return spFrame(body, st.anim, st.t0, st.loop);
+}
+function loop(){
+  if (SP.ready){
+    var K = fighterK();
+    ents.forEach(function(e){ drawOn(e.cv, frameFor(e.f), K, e.f.foe !== e.rev); });
+    cloneList.forEach(function(c){ drawOn(c.cv, spFrame(c.body, c.anim, c.t0, c.loop), K, c.flip); });
+    pickInst.forEach(function(p){ drawOn(p.cv, spFrame(p.body, 'daiji', p.t0, true), 0.5, false, 96); });
+    fxList = fxList.filter(function(x){
+      var m = SP.meta[x.name], a = m && m.animations[x.an];
+      if (!a){ x.cv.remove(); return false; }
+      var seq = SP.seq[x.name + ':' + x.an];
+      var pos = Math.floor((vnow() - x.t0) * (x.rate || 1) * (m.fps || 12) / 1000);
+      if (pos >= seq.length){ x.cv.remove(); return false; }
+      if (x.mv){
+        var p = Math.min(1, (vnow() - x.t0) / x.mv), e2 = 1 - Math.pow(1 - p, 3);
+        x.sx = x.x0 + (x.x1 - x.x0) * e2;
+        x.sy = x.y0 + (x.y1 - x.y0) * e2;
+      }
+      var fr = { a:a, idx:seq[pos], img:SP.img[x.name + ':' + x.an] };
+      var H = stageH() * (x.big ? 0.6 : 0.42), k = H / a.cell[1];
+      drawOn(x.cv, fr, k, x.flip);
+      var ox = x.flip ? (a.cell[0] - a.origin[0]) : a.origin[0];
+      x.cv.style.left = (stageEl.clientWidth * x.sx / 100 - ox * k) + 'px';
+      x.cv.style.top = (stageEl.clientHeight * x.sy / 100 - a.origin[1] * k) + 'px';
+      return true;
+    });
+    if (summonState && SP.meta['jiuwei']){
+      var fr2 = spFrame('jiuwei', 'jiuwei1', summonState.t0, false);
+      if (fr2){
+        var cv = summonState.cv, k2 = stageH() * 0.62 / fr2.a.cell[1];
+        drawOn(cv, fr2, k2, false);
+        cv.style.left = (stageEl.clientWidth * 0.04 - fr2.a.origin[0] * k2) + 'px';
+        cv.style.top = (stageEl.clientHeight * 0.94 - fr2.a.origin[1] * k2) + 'px';
+      }
+    }
+  }
+  requestAnimationFrame(loop);
+}
+
+
+'use strict';
+/* ===== AI & koreografi battle otomatis (bentuk video: tontonan sinematik) ===== */
+function ms(x){ return Math.round(x / speedMul); }
+function aiDecide(f){
+  var foesOf = f.foe ? allies : foes, friends = f.foe ? foes : allies;
+  if (f.heal){
+    var weak = alive(friends).sort(function(a, b){ return a.hp / a.maxhp - b.hp / b.maxhp; })[0];
+    if (weak && weak.hp / weak.maxhp < 0.7 && f.ck >= 30) return { kind: (f.ck >= 100 && weak.hp / weak.maxhp < 0.45) ? 'ult' : 'skill', target: weak };
+  }
+  var targets = alive(foesOf); if (!targets.length) return { kind:'wait' };
+  var tgt = (Math.random() < 0.55) ? targets.sort(function(a, b){ return a.hp - b.hp; })[0] : targets[Math.floor(Math.random() * targets.length)];
+  if (f.ck >= 100) return { kind:'ult', target:tgt };
+  if (f.ck >= 30 && Math.random() < 0.55) return { kind:'skill', target:tgt };
+  return { kind:'atk', target:tgt };
+}
+function applyHit(att, tgt, mul, label){
+  var d = dmgCalc(att, tgt, mul); tgt.hp -= d; att.ck = Math.min(100, att.ck + 12); hap(att.foe ? 'err' : 'tap');
+  log(att.ava + ' ' + att.nm + ' ' + label + ' → ' + tgt.nm + ': -' + d + ' HP' + (elMul(att.el, tgt.el) > 1 ? ' (elemen unggul!)' : ''), att.foe ? 'bad' : 'good');
+  if (tgt.hp <= 0){ setAnim(tgt, 'siwang', false); log('💀 ' + tgt.nm + ' tumbang!', 'sys'); }
+  return d;
+}
+function knockback(te, pushDir, dist, heavy, token){
+  var nx = Math.max(3, Math.min(97, te.x + pushDir * dist));
+  moveEnt(te, nx, te.y, ms(170));
+  if (te.f.hp > 0 && heavy){ setAnim(te.f, 'daodi', false); }
+  else if (te.f.hp > 0) setAnim(te.f, 'beiji', false);
+  return delay(heavy ? 1150 : 550).then(function(){
+    if (token !== battleToken) return;
+    if (te.f.hp > 0) moveEnt(te, te.home.x, te.home.y, ms(320));
+  });
+}
+function runTo(ae, x, y, anim){
+  var dist = Math.abs(x - ae.x);
+  var tv = Math.max(200, Math.min(640, dist * 15)); /* durasi VIRTUAL: delay() yang mengonversi ke waktu nyata; ms() di sini = dobel bagi (bug lama: dash melesat di Speed 2x) */
+  setAnim(ae.f, (anim && hasAnim(bodyOf(ae.f), anim)) ? anim : 'paobu', true);
+  moveEnt(ae, x, y, ms(tv));
+  return delay(tv);
+}
+function runHome(ae, token){
+  ae.rev = true;
+  return runTo(ae, ae.home.x, ae.home.y).then(function(){
+    ae.rev = false;
+    if (token === battleToken && ae.f.hp > 0) setAnim(ae.f, 'daiji', true);
+  });
+}
+/* ===== Jurus bayangan (pola asli APK): karakter MENGGANDA jadi klon yang ikut memukul =====
+   Di game sumber, klon adalah instansi karakter terpisah yang di-spawn engine
+   (bukti data: pose klon statis luoxuanwan_fenshen1/2 di mainAction) — bukan bagian
+   dari satu animasi. Sejak v2.5 klon khusus ULT Akira; skill-nya memakai
+   feileishen (teleport) lewat teleportStrike di bawah. */
+/* ===== Teleport Akira (feileishen): memudar di tempat, muncul di target, menghantam =====
+   Menghilang di sini SAH — memang isi animasinya (alpha memudar, IMPACT 833 ms). */
+async function teleportStrike(att, ae, te, target, dir, token){
+  var body = bodyOf(att);
+  var imp = IMPACT['shuimen:feileishen'] || 833, tot = animMs(body, 'feileishen');
+  var fade = Math.round(imp * 0.55);
+  setAnim(att, 'feileishen', false);
+  await delay(fade); if (token !== battleToken) return;
+  moveEnt(ae, te.x - dir * 8.5, te.y, 0);
+  await delay(imp - fade); if (token !== battleToken) return;
+  spawnFxAt(te, FXBYEL[att.el], FXBYEL[att.el], false, null, att.foe);
+  sfx(SFXBYEL[att.el], 0.85);
+  var d = applyHit(att, target, att.sm, '🌀 ' + att.skill);
+  badge(te, '-' + d); setDuel(att, target);
+  var kb = knockback(te, dir, 8, false, token);
+  await delay(Math.max(0, tot - imp));
+  await runHome(ae, token);
+  await kb;
+}
+function spawnClone(body, x, y, flip){
+  var el = document.createElement('div');
+  el.className = 'ent clone';
+  el.style.left = x + '%'; el.style.top = y + '%'; el.style.zIndex = depthZ(y);
+  el.style.opacity = '0'; el.style.transition = 'opacity 160ms ease';
+  el.style.pointerEvents = 'none';
+  var cv = document.createElement('canvas'); el.appendChild(cv);
+  stageEl.appendChild(el);
+  var c = { el:el, cv:cv, body:body, anim:'daiji', t0:vnow(), loop:true, x:x, y:y, flip:flip };
+  cloneList.push(c);
+  requestAnimationFrame(function(){ el.style.opacity = '1'; });
+  return c;
+}
+function cloneSetAnim(c, an, loop){ c.anim = an; c.t0 = vnow(); c.loop = !!loop; }
+function cloneMove(c, x, y, msVal){
+  c.x = x; c.y = y;
+  c.el.style.transition = 'opacity 160ms ease, left ' + msVal + 'ms ease-in-out, top ' + msVal + 'ms ease-in-out';
+  c.el.style.left = x + '%'; c.el.style.top = y + '%'; c.el.style.zIndex = depthZ(y);
+}
+function cloneRun(c, x, y){
+  var dist = Math.abs(x - c.x);
+  var tv = Math.max(200, Math.min(640, dist * 15)); /* virtual, sama seperti runTo */
+  cloneSetAnim(c, 'paobu', true);
+  cloneMove(c, x, y, ms(tv));
+  return delay(tv);
+}
+function cloneVanish(c){
+  c.el.style.opacity = '0';
+  setTimeout(function(){ c.el.remove(); }, 240);
+  var i = cloneList.indexOf(c); if (i >= 0) cloneList.splice(i, 1);
+}
+async function shadowStrike(att, ae, te, target, dir, isUlt, token){
+  var body = bodyOf(att);
+  var n = isUlt ? 2 : 1, clones = [];
+  for (var i = 0; i < n; i++)
+    clones.push(spawnClone(body, ae.home.x - dir * (6 + i * 3), ae.home.y + (i === 0 ? -7 : 5), att.foe));
+  await delay(260);
+  if (token !== battleToken){ clones.forEach(cloneVanish); return; }
+  var runs = [runTo(ae, te.x - dir * 8.5, te.y)];
+  clones.forEach(function(c, i){
+    runs.push(cloneRun(c, te.x - dir * (13 + i * 4.5), te.y + (i === 0 ? -8 : 8)));
+  });
+  await Promise.all(runs);
+  if (token !== battleToken){ clones.forEach(cloneVanish); return; }
+  setAnim(att, 'quanji', false);
+  clones.forEach(function(c){ cloneSetAnim(c, 'quanji', false); });
+  await delay(IMPACT.quanji);
+  if (token !== battleToken){ clones.forEach(cloneVanish); return; }
+  var fx = FXBYEL[att.el];
+  spawnFxAt(te, fx, fx, isUlt, null, att.foe);
+  sfx(isUlt ? 'bomb_long01' : SFXBYEL[att.el], 0.9);
+  if (isUlt) flashShake(true);
+  var d = applyHit(att, target, isUlt ? att.um : att.sm, (isUlt ? '💥 ' : '🌀 ') + (isUlt ? att.ult : att.skill));
+  badge(te, '-' + d); setDuel(att, target);
+  var kb = knockback(te, dir, isUlt ? 13 : 8, isUlt, token);
+  await delay(220);
+  clones.forEach(cloneVanish);
+  await delay(Math.max(0, animMs(body, 'quanji') - IMPACT.quanji - 220));
+  await runHome(ae, token);
+  await kb;
+}
+async function runTurn(att, token){
+  if (att.hp <= 0 || token !== battleToken) return;
+  att.ck = Math.min(100, att.ck + 15);
+  var dec = aiDecide(att);
+  if (dec.kind === 'wait') return;
+  var ae = entOf(att); if (!ae) return;
+  /* --- penyembuh: cast di tempat, pulih tepat di frame lepas jurus --- */
+  if (att.heal && dec.target && dec.target.foe === att.foe){
+    var tgt = dec.target, te0 = entOf(tgt);
+    setDuel(att, alive(att.foe ? allies : foes)[0] || tgt);
+    callout(att.nm, dec.kind === 'ult' ? att.ult : att.skill);
+    /* v2.5: penyembuh merapal zhiliaoshu (pose jurus penyembuh sumber), bukan memukul.
+       Pulih jatuh di akhir pose — momen lepas jurusnya. */
+    var hInfo, hBody = bodyOf(att);
+    if (hasAnim(hBody, 'zhiliaoshu')){ setAnim(att, 'zhiliaoshu', false); var hz = animMs(hBody, 'zhiliaoshu'); hInfo = { impact: hz, total: hz }; }
+    else { hInfo = sigInfo(att, dec.kind === 'ult'); playSig(att, dec.kind === 'ult'); }
+    att.ck -= (dec.kind === 'ult' ? 100 : 30);
+    await delay(hInfo.impact); if (token !== battleToken) return;
+    var amt = Math.round(att.atk * (dec.kind === 'ult' ? att.um : att.sm));
+    tgt.hp = Math.min(tgt.maxhp, tgt.hp + amt);
+    if (te0) badge(te0, '+' + amt, true);
+    sfx('cure01', 0.8); if (dec.kind === 'ult') flashShake(false);
+    log('💚 ' + att.nm + ' ' + (dec.kind === 'ult' ? att.ult : att.skill) + ' → ' + tgt.nm + ': +' + amt + ' HP', att.foe ? 'bad' : 'good');
+    hap('ok'); setDuel(att, tgt);
+    await delay(Math.max(0, hInfo.total - hInfo.impact));
+    return;
+  }
+  var target = dec.target, te = entOf(target); if (!te) return;
+  var dir = att.foe ? -1 : 1;
+  setDuel(att, target);
+  if (dec.kind === 'ult'){
+    callout(att.nm, att.ult);
+    att.ck -= 100;
+    var uInfo = sigInfo(att, true);
+    if (att.id === 'haru' && !att.foe){
+      playSig(att, true); summonJiuwei(); sfx('bomb_long01', 0.9);
+      await delay(2250); if (token !== battleToken) return;
+      flashShake(true);
+      var d1 = applyHit(att, target, att.um, '💥 ' + att.ult);
+      badge(te, '-' + d1); setDuel(att, target);
+      await knockback(te, dir, 13, true, token);
+      await delay(Math.max(0, uInfo.total - 2250 - 1150));
+      return;
+    }
+    if (att.id === 'kaen' && !att.foe){
+      playSig(att, true);
+      await delay(uInfo.impact); if (token !== battleToken) return;
+      spawnFxAt(te, 'tianzhao', 'tianzhao', true, null, att.foe);
+      await delay(FXPEAK.tianzhao); if (token !== battleToken) return;
+      sfx('bomb_long01', 0.9); flashShake(true);
+      var d2 = applyHit(att, target, att.um, '💥 ' + att.ult);
+      badge(te, '-' + d2); setDuel(att, target);
+      await knockback(te, dir, 13, true, token);
+      return;
+    }
+    var uFx = FXBYEL[att.el];
+    if (rangeOf(att, 'ult') === 'melee'){
+      if (bodyOf(att) === 'shuimen'){ await shadowStrike(att, ae, te, target, dir, true, token); return; }
+      await runTo(ae, te.x - dir * 8.5, te.y);
+      if (token !== battleToken) return;
+      playSig(att, true);
+      await delay(uInfo.impact); if (token !== battleToken) return;
+      spawnFxAt(te, uFx, uFx, true, null, att.foe);
+      sfx('bomb_long01', 0.9); flashShake(true);
+      var d3 = applyHit(att, target, att.um, '💥 ' + att.ult);
+      badge(te, '-' + d3); setDuel(att, target);
+      var kb3 = knockback(te, dir, 13, true, token);
+      await delay(Math.max(0, uInfo.total - uInfo.impact));
+      await runHome(ae, token);
+      await kb3;
+    } else {
+      var cInfoU = useShifa(att) ? castInfo(att) : uInfo;
+      if (useShifa(att)) playCast(att); else playSig(att, true);
+      await delay(cInfoU.impact); if (token !== battleToken) return;
+      spawnFxAt(te, uFx, uFx, true, ae);
+      await delay(FXPEAK[uFx] || 0); if (token !== battleToken) return;
+      sfx('bomb_long01', 0.9); flashShake(true);
+      var d3b = applyHit(att, target, att.um, '💥 ' + att.ult);
+      badge(te, '-' + d3b); setDuel(att, target);
+      await knockback(te, dir, 13, true, token);
+      await delay(Math.max(0, cInfoU.total - cInfoU.impact - (FXPEAK[uFx] || 0)));
+    }
+    return;
+  }
+  if (dec.kind === 'skill'){
+    callout(att.nm, att.skill);
+    att.ck -= 30;
+    var sInfo = sigInfo(att, false), sFx = FXBYEL[att.el];
+    if (rangeOf(att, 'skill') === 'melee' && bodyOf(att) === 'shuimen'){
+      await teleportStrike(att, ae, te, target, dir, token);
+    } else if (rangeOf(att, 'skill') === 'melee' && bodyOf(att) === 'mingren'){
+      /* v2.5 pola sumber: charge luoxuanwan_ready di tempat -> dash MEMEGANG
+         Rasengan (luoxuanwan_run) -> luoxuanwan_hit. Damage tetap 1x applyHit sm. */
+      setAnim(att, 'luoxuanwan_ready', false);
+      await delay(animMs('mingren', 'luoxuanwan_ready')); if (token !== battleToken) return;
+      await runTo(ae, te.x - dir * 8.5, te.y, 'luoxuanwan_run');
+      if (token !== battleToken) return;
+      setAnim(att, 'luoxuanwan_hit', false);
+      await delay(IMPACT['mingren:luoxuanwan_hit']); if (token !== battleToken) return;
+      spawnFxAt(te, 'luoxuanwan', 'luoxuanwan', false, null, att.foe);
+      sfx(SFXBYEL[att.el], 0.85);
+      var d4m = applyHit(att, target, att.sm, '🌀 ' + att.skill);
+      badge(te, '-' + d4m); setDuel(att, target);
+      var kb4m = knockback(te, dir, 8, false, token);
+      await delay(Math.max(0, animMs('mingren', 'luoxuanwan_hit') - IMPACT['mingren:luoxuanwan_hit']));
+      await runHome(ae, token);
+      await kb4m;
+    } else if (rangeOf(att, 'skill') === 'melee'){
+      await runTo(ae, te.x - dir * 8.5, te.y);
+      if (token !== battleToken) return;
+      playSig(att, false);
+      await delay(sInfo.impact); if (token !== battleToken) return;
+      spawnFxAt(te, sFx, sFx, false, null, att.foe);
+      sfx(SFXBYEL[att.el], 0.85);
+      var d4 = applyHit(att, target, att.sm, '🌀 ' + att.skill);
+      badge(te, '-' + d4); setDuel(att, target);
+      var kb4 = knockback(te, dir, 8, false, token);
+      await delay(Math.max(0, sInfo.total - sInfo.impact));
+      await runHome(ae, token);
+      await kb4;
+    } else {
+      var cInfoS = useShifa(att) ? castInfo(att) : sInfo;
+      if (useShifa(att)) playCast(att); else playSig(att, false);
+      await delay(cInfoS.impact); if (token !== battleToken) return;
+      spawnFxAt(te, sFx, sFx, false, ae);
+      await delay(FXPEAK[sFx] || 0); if (token !== battleToken) return;
+      sfx(SFXBYEL[att.el], 0.85);
+      var d4b = applyHit(att, target, att.sm, '🌀 ' + att.skill);
+      badge(te, '-' + d4b); setDuel(att, target);
+      await knockback(te, dir, 6, false, token);
+      await delay(Math.max(0, cInfoS.total - cInfoS.impact - (FXPEAK[sFx] || 0)));
+    }
+  } else {
+    await runTo(ae, te.x - dir * 8.5, te.y);
+    if (token !== battleToken) return;
+    var qTotal = animMs(bodyOf(att), 'quanji');
+    setAnim(att, 'quanji', false);
+    await delay(IMPACT.quanji); if (token !== battleToken) return;
+    sfx('hit_sword01', 0.8);
+    var d5 = applyHit(att, target, 1, 'menyerang');
+    badge(te, '-' + d5); setDuel(att, target);
+    var kb5 = knockback(te, dir, 5.5, false, token);
+    await delay(Math.max(0, qTotal - IMPACT.quanji));
+    await runHome(ae, token);
+    await kb5;
+  }
+  /* sinergi serangan cadangan */
+  if (!att.foe && syn && syn.backup && alive(foes).length && Math.random() < syn.backup && !backupUsed[round + '-' + att.id]){
+    backupUsed[round + '-' + att.id] = 1;
+    var t2 = alive(foes)[Math.floor(Math.random() * alive(foes).length)], te2 = entOf(t2);
+    await delay(280); if (token !== battleToken) return;
+    spawnFxAt(te2, FXBYEL[att.el], FXBYEL[att.el], false);
+    var d6 = applyHit(att, t2, 1.4, '✨ serangan cadangan');
+    if (te2) badge(te2, '-' + d6);
+    setDuel(att, t2);
+    await delay(420);
+  }
+}
+async function battleLoop(token){
+  while (phase === 'fighting' && token === battleToken){
+    if (!alive(foes).length) return stageWin();
+    if (!alive(allies).length) return gameEnd(false);
+    round++;
+    if (syn && syn.regen) alive(allies).forEach(function(f){ f.hp = Math.min(f.maxhp, f.hp + syn.regen); });
+    var queue = alive(allies).concat(alive(foes)).sort(function(a, b){ return b.agi - a.agi; });
+    log('— Ronde ' + round + ' —', 'sys');
+    for (var i = 0; i < queue.length; i++){
+      if (phase !== 'fighting' || token !== battleToken) return;
+      if (queue[i].hp <= 0) continue;
+      if (!alive(foes).length || !alive(allies).length) break;
+      await runTurn(queue[i], token);
+      await delay(110);
+    }
+  }
+}
+</script>
+<script>
+'use strict';
+/* ================= STUDIO SKILL — instrumentasi di atas mesin game ================= */
+/* Peta badan untuk arah musuh: karakter sekutu sebagai musuh memakai badan aslinya. */
+ROSTER.forEach(function(r){ FOE_BODIES[r.nm] = BODIES[r.id]; });
+var origAiDecide = aiDecide;
+var FORCED = null;
+aiDecide = function(f){
+  if (FORCED && f === FORCED.caster){ var d = { kind: FORCED.kind, target: FORCED.target }; FORCED = null; return d; }
+  return origAiDecide(f);
+};
+window.__errors = [];
+window.addEventListener('error', function(e){ window.__errors.push(String(e.message || e.error)); });
+
+var SEL = { id: 'haru', kind: 'skill', dir: 'ally' };  /* dir: ally = sekutu→musuh, foe = musuh→sekutu */
+function rosterOf(id){ return ROSTER.filter(function(r){ return r.id === id; })[0]; }
+function sigAnims(body, isUlt){
+  var s = SIG[body]; if (!s) return ['quanji'];
+  if (s.length === 2) return isUlt ? s.slice() : [s[1]];
+  return s.slice();
+}
+function fxFor(f, kind){
+  if (f.heal && kind !== 'atk') return '(tidak ada fx armature — v2.5: zhiliaoshu di caster + lencana hijau di penerima)';
+  if (kind === 'atk') return '(tidak ada)';
+  if (f.id === 'haru' && kind === 'ult') return 'SUMMON jiuwei (jiuwei1)';
+  if (f.id === 'kaen' && kind === 'ult') return 'tianzhao (khusus sekutu)';
+  return FXBYEL[f.el] + ' (' + FXBYEL[f.el] + ')';
+}
+function expectedInfo(f, kind){
+  /* Perkiraan waktu benturan menurut tabel game sendiri, dihitung dari awal animasi jurus. */
+  if (kind === 'atk') return { sigStartPlus: IMPACT.quanji, label: 'IMPACT.quanji=417 dari awal quanji (sesudah lari tiba)' };
+  var si = sigInfo(f, kind === 'ult');
+  if (bodyOf(f) === 'shuimen'){
+    if (kind === 'skill') return { sigStartPlus: IMPACT['shuimen:feileishen'], label: 'v2.5 feileishen: damage di IMPACT.feileishen=833 dari awal animasi (teleport)' };
+    return { sigStartPlus: IMPACT.quanji, label: 'shadowStrike (ULT saja sejak v2.5): IMPACT.quanji=417 dari awal quanji serentak (sesudah lari tiba)' };
+  }
+  if (f.heal){
+    if (typeof hasAnim === 'function' && hasAnim(bodyOf(f), 'zhiliaoshu')){ var hz = animMs(bodyOf(f), 'zhiliaoshu'); return { sigStartPlus: hz, label: 'v2.5 zhiliaoshu: pulih di akhir pose zhiliaoshu=' + hz + ' ms' }; }
+    return { sigStartPlus: si.impact, label: 'pulih di sigInfo.impact=' + si.impact + ' (frame lepas jurus)' };
+  }
+  if (bodyOf(f) === 'mingren' && kind === 'skill') return { sigStartPlus: animMs('mingren', 'luoxuanwan_ready') + 640 + IMPACT['mingren:luoxuanwan_hit'], label: 'v2.5 trio sumber: ready ' + animMs('mingren', 'luoxuanwan_ready') + ' + dash maks 640 + IMPACT hit 1000' };
+  if (f.id === 'haru' && kind === 'ult' && !f.foe) return { sigStartPlus: 2250, label: 'KHUSUS summon: damage di delay tetap 2250 (BUKAN sigInfo.impact=' + si.impact + ')' };
+  if (f.id === 'kaen' && kind === 'ult' && !f.foe) return { sigStartPlus: si.impact + FXPEAK.tianzhao, label: 'KHUSUS Amaterasu: sigInfo.impact=' + si.impact + ' + FXPEAK.tianzhao=1667' };
+  var rng = rangeOf(f, kind);
+  if (rng === 'cast'){
+    var fx = FXBYEL[f.el];
+    if (typeof useShifa === 'function' && useShifa(f)){ var ci = castInfo(f); return { sigStartPlus: ci.impact + (FXPEAK[fx] || 0), label: 'v2.5 cast shifa: rapal shifaAReady=' + ci.impact + ' + FXPEAK[' + fx + ']=' + (FXPEAK[fx] || 0) }; }
+    return { sigStartPlus: si.impact + (FXPEAK[fx] || 0), label: 'cast: sigInfo.impact=' + si.impact + ' + FXPEAK[' + fx + ']=' + (FXPEAK[fx] || 0) };
+  }
+  return { sigStartPlus: si.impact, label: 'melee: damage di sigInfo.impact=' + si.impact + ' dari awal animasi jurus (sesudah lari tiba)' };
+}
+function renderSourcePanel(){
+  var r = rosterOf(SEL.id), body = BODIES[r.id];
+  var fake = mkFighter(r, SEL.dir === 'foe', 1);
+  if (SEL.dir === 'foe') FOE_RANGE[r.nm] = SEL.kind === 'ult' ? r.ulr : r.skr;
+  var isUlt = SEL.kind === 'ult';
+  var anims = SEL.kind === 'atk' ? ['quanji'] : sigAnims(body, isUlt);
+  if (SEL.kind !== 'atk'){
+    if (r.heal) anims = ['zhiliaoshu'];
+    else if (body === 'shuimen') anims = SEL.kind === 'skill' ? ['feileishen'] : ['quanji'];
+    else if (body === 'mingren' && SEL.kind === 'skill') anims = ['luoxuanwan_ready', 'luoxuanwan_run', 'luoxuanwan_hit'];
+    else if (body !== 'bai' && (SEL.kind === 'ult' ? r.ulr : r.skr) === 'cast') anims = ['shifaAReady', 'shifaAHit'];
+  }
+  var lines = [];
+  lines.push(r.nm + ' · badan ' + body + ' · elemen ' + r.el + ' · arah ' + (SEL.dir === 'foe' ? 'musuh→sekutu' : 'sekutu→musuh'));
+  lines.push('jurus: ' + (SEL.kind === 'atk' ? 'Serangan biasa (quanji)' : SEL.kind === 'skill' ? r.skill : r.ult) + ' · range ' + (SEL.kind === 'atk' ? 'melee' : rangeOf(fake, SEL.kind)) + (r.heal && SEL.kind !== 'atk' ? ' · HEAL' : ''));
+  anims.forEach(function(an){
+    var m = SP.meta[body], a = m && m.animations[an];
+    if (!a){ lines.push('anim ' + an + ': TIDAK ADA di meta ' + body); return; }
+    var fr = 0; a.timeline.forEach(function(t){ fr += t[1]; });
+    var uniq = {}; a.timeline.forEach(function(t){ uniq[t[0]] = 1; });
+    lines.push('anim ' + an + ': ' + Math.round(fr / (m.fps || 12) * 1000) + ' ms · frame unik ' + Object.keys(uniq).length + '/' + fr + ' · IMPACT ' + ((IMPACT[body + ':' + an] !== undefined) ? IMPACT[body + ':' + an] : (an === 'quanji' ? IMPACT.quanji : '— (fallback quanji 417)')) + ' ms');
+  });
+  var si = sigInfo(fake, isUlt);
+  lines.push('sigInfo: impact ' + si.impact + ' ms · total ' + si.total + ' ms');
+  lines.push('fx: ' + fxFor(r, SEL.kind));
+  var fxn = FXBYEL[r.el], fm = SP.meta[fxn];
+  if (fm && fm.animations[fxn]){ var fa = fm.animations[fxn], ff = 0; fa.timeline.forEach(function(t){ ff += t[1]; });
+    lines.push('fx ' + fxn + ': durasi ' + Math.round(ff / (fm.fps || 12) * 1000) + ' ms · FXPEAK ' + FXPEAK[fxn] + ' ms · TRAVEL_FX ' + (TRAVEL_FX[fxn] ? 'YA (berjalan caster→target)' : 'tidak (diam di target)')); }
+  lines.push('klon/fenshen: ' + (body === 'shuimen' && SEL.kind === 'ult' ? 'YA — shadowStrike khusus ULT (2 klon); skill v2.5 = feileishen teleport tanpa klon' : body === 'shuimen' && SEL.kind === 'skill' ? 'tidak — skill v2.5 feileishen (teleport, memudar SAH)' : 'tidak'));
+  lines.push('harapan benturan: ' + expectedInfo(fake, SEL.kind).label);
+  document.getElementById('srcdata').textContent = lines.join('\n');
+  if (typeof refreshBugUI === 'function') refreshBugUI();
+  drawStrip(body, anims[anims.length - 1]);
+}
+function drawStrip(body, an){
+  var cv = document.getElementById('strip'), ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  var m = SP.meta[body]; if (!m) return;
+  var a = m.animations[an]; if (!a) return;
+  var img = SP.img[body + ':' + an]; if (!img || !img.complete) { setTimeout(function(){ drawStrip(body, an); }, 300); return; }
+  var uniq = []; a.timeline.forEach(function(t){ if (uniq.indexOf(t[0]) < 0) uniq.push(t[0]); });
+  var cw = a.cell[0], ch = a.cell[1];
+  var x = 2;
+  var h = 96, w = cw * (96 / ch);
+  uniq.slice(0, Math.max(1, Math.floor(332 / (w + 2)))).forEach(function(idx){
+    var sx = (idx % a.cols) * cw, sy = Math.floor(idx / a.cols) * ch;
+    ctx.drawImage(img, sx, sy, cw, ch, x, 0, w, h); x += w + 2;
+  });
+}
+/* ---------- setup duel 1v1 & pemicu paksa ---------- */
+var cur = null; /* {caster, target, casterEnt, targetEnt, mateEnt} */
+function setupDuel(){
+  clearEnts(); fxList = []; cloneList = [];
+  stageEl.style.backgroundImage = 'url(assets/bg/huoyingcun.webp)';
+  document.getElementById('hud').classList.remove('hidden');
+  var r = rosterOf(SEL.id);
+  var casterFoe = SEL.dir === 'foe';
+  FOE_BODIES[r.nm] = BODIES[r.id];
+  if (casterFoe) FOE_RANGE[r.nm] = SEL.kind === 'ult' ? r.ulr : r.skr;
+  var caster = mkFighter(r, casterFoe, 1);
+  caster.ck = SEL.kind === 'ult' ? 100 : SEL.kind === 'skill' ? 60 : 0;
+  /* target: sekutu dummy = Goro (badan dingci); musuh dummy = Bandit Kapak (badan zuozhu) */
+  var target = casterFoe ? mkFighter(rosterOf('goro'), false, 1)
+                         : mkFighter(['Bandit Kapak', '🪓', 'api', 190, 40, 17, 45], true, 1);
+  target.maxhp = 5000; target.hp = 5000;
+  var mate = null, mateEnt = null;
+  if (r.heal && SEL.kind !== 'atk'){
+    mate = casterFoe ? mkFighter(['Bandit Kapak', '🪓', 'api', 190, 40, 17, 45], true, 1)
+                     : mkFighter(rosterOf('ren'), false, 1);
+    mate.hp = Math.round(mate.maxhp * 0.35);
+  }
+  allies = casterFoe ? [target] : [caster].concat(mate ? [mate] : []);
+  foes = casterFoe ? [caster].concat(mate ? [mate] : []) : [target];
+  var cEnt = makeEnt(caster, casterFoe ? FOE_SLOTS[0] : ALLY_SLOTS[0]);
+  var tEnt = makeEnt(target, casterFoe ? ALLY_SLOTS[0] : FOE_SLOTS[0]);
+  if (mate) mateEnt = makeEnt(mate, casterFoe ? FOE_SLOTS[1] : ALLY_SLOTS[1]);
+  buildHudTeams(); setDuel(caster, target); refreshMinis();
+  cur = { caster: caster, target: target, mate: mate, cEnt: cEnt, tEnt: tEnt, mateEnt: mateEnt };
+  return cur;
+}
+function rectPct(el){
+  var sr = stageEl.getBoundingClientRect(), r = el.getBoundingClientRect();
+  return Math.round(((r.left + r.width / 2) - sr.left) / sr.width * 1000) / 10;
+}
+async function castSelected(){
+  if (!SP.ready) { document.getElementById('turninfo').textContent = 'Memuat sprite…'; return null; }
+  renderSourcePanel();
+  var d = setupDuel();
+  var caster = d.caster, target = d.target;
+  var effTarget = (caster.heal && SEL.kind !== 'atk') ? d.mate : target;
+  var effEnt = (caster.heal && SEL.kind !== 'atk') ? d.mateEnt : d.tEnt;
+  FORCED = { caster: caster, kind: SEL.kind, target: effTarget };
+  phase = 'fighting';
+  var token = ++battleToken;
+  var exp = expectedInfo(caster, SEL.kind);
+  var sigNames = SEL.kind === 'atk' ? ['quanji'] : sigAnims(bodyOf(caster), SEL.kind === 'ult');
+  if (SEL.kind !== 'atk'){
+    var cb2 = bodyOf(caster);
+    if (caster.heal) sigNames = ['zhiliaoshu', 'baoliequan', 'quanji'];
+    else if (cb2 === 'shuimen') sigNames = SEL.kind === 'skill' ? ['feileishen'] : ['quanji'];
+    else if (cb2 === 'mingren' && SEL.kind === 'skill') sigNames = ['luoxuanwan_ready'];
+    else if (rangeOf(caster, SEL.kind) === 'cast' && cb2 !== 'bai') sigNames = sigNames.concat(['shifaAReady']); /* jalur spesial sekutu (summon/Amaterasu) tetap playSig; jalur cast generik shifa — yang duluan main yang tercatat */
+  }
+  var tr = { id: SEL.id, nm: caster.nm, kind: SEL.kind, dir: SEL.dir, body: bodyOf(caster),
+             t0v: vnow(), samples: [], fxSeen: {}, clonesMax: 0, hpDropV: null, hpBase: effTarget.hp,
+             sigStartV: null, fxStartV: null, casterMinX: 999, casterMaxX: -999, targetHomeX: d.tEnt.x,
+             targetMaxDisp: 0, badgeSeen: false, casterAnims: [], targetAnims: [], errBefore: window.__errors.length,
+             pxStart: null, casterPxMin: 9999, targetPxMin: 9999 };
+  function pxOf(cv){ try { if (!cv || !cv.width) return 0; var dd = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data; var n = 0; for (var i = 3; i < dd.length; i += 997) if (dd[i] > 10) n++; return n; } catch(e){ return -1; } }
+  var lastCA = '', lastTA = '';
+  var sampler = setInterval(function(){
+    var v = vnow() - tr.t0v;
+    var cp = pxOf(d.cEnt.cv), tp = pxOf(d.tEnt.cv);
+    if (tr.pxStart === null) tr.pxStart = { c: cp, t: tp };
+    if (v > 300){ if (cp >= 0) tr.casterPxMin = Math.min(tr.casterPxMin, cp); if (tp >= 0) tr.targetPxMin = Math.min(tr.targetPxMin, tp); }
+    var cx = rectPct(d.cEnt.el);
+    tr.casterMinX = Math.min(tr.casterMinX, cx); tr.casterMaxX = Math.max(tr.casterMaxX, cx);
+    var tx = rectPct(d.tEnt.el);
+    tr.targetMaxDisp = Math.max(tr.targetMaxDisp, Math.abs(tx - rectPct0(d.tEnt)));
+    var ca = caster._spr ? caster._spr.anim : '?';
+    if (ca !== lastCA){ tr.casterAnims.push([Math.round(v), ca]); lastCA = ca; if (sigNames.indexOf(ca) >= 0 && tr.sigStartV === null) tr.sigStartV = v; }
+    var ta = effTarget._spr ? effTarget._spr.anim : '?';
+    if (ta !== lastTA){ tr.targetAnims.push([Math.round(v), ta]); lastTA = ta; }
+    fxList.forEach(function(x){ var k = x.name; if (!tr.fxSeen[k]) tr.fxSeen[k] = { flip: x.flip, mv: !!x.mv, minSx: x.sx, maxSx: x.sx, startV: v }; var e = tr.fxSeen[k]; e.minSx = Math.min(e.minSx, x.sx); e.maxSx = Math.max(e.maxSx, x.sx); if (tr.fxStartV === null) tr.fxStartV = v; });
+    tr.clonesMax = Math.max(tr.clonesMax, cloneList.length);
+    if (stageEl.querySelector('.badge')) tr.badgeSeen = true;
+    if (tr.hpDropV === null){
+      if (caster.heal && SEL.kind !== 'atk'){ if (effTarget.hp > tr.hpBase) tr.hpDropV = v; }
+      else if (effTarget.hp < tr.hpBase) tr.hpDropV = v;
+    }
+    tr.samples.push([Math.round(v), cx, tx, ca, cloneList.length, fxList.length]);
+  }, 25);
+  var homeTx = null;
+  function rectPct0(ent){ if (homeTx === null) homeTx = rectPct(ent.el); return homeTx; }
+  var tStart = performance.now();
+  try { await runTurn(caster, token); } catch(e){ window.__errors.push('runTurn: ' + e.message); }
+  await new Promise(function(res){ setTimeout(res, 500); });
+  clearInterval(sampler);
+  tr.wallMs = Math.round(performance.now() - tStart);
+  tr.virtMs = Math.round(vnow() - tr.t0v);
+  /* HILANG = piksel 0 padahal petarung hidup & bukan feileishen (yang memang memudar). */
+  tr.vanish = (tr.pxStart && (tr.pxStart.c === 0 || tr.pxStart.t === 0)) || tr.casterPxMin === 0 || tr.targetPxMin === 0;
+  if (bodyOf(caster) === 'shuimen' && SEL.kind === 'skill') tr.vanish = (tr.pxStart && tr.pxStart.t === 0) || tr.targetPxMin === 0;
+  tr.errors = window.__errors.slice(tr.errBefore);
+  tr.expected = exp;
+  tr.deltaImpact = (tr.hpDropV !== null && tr.sigStartV !== null) ? Math.round(tr.hpDropV - tr.sigStartV) : null;
+  tr.fxList = tr.fxSeen;
+  tr.casterTravel = Math.round((tr.casterMaxX - tr.casterMinX) * 10) / 10;
+  delete tr.samples; delete tr.fxSeen; delete tr.hpBase; delete tr.errBefore;
+  window.__lastTrace = tr;
+  renderTrace(tr);
+  return tr;
+}
+function renderTrace(tr){
+  var c = [];
+  var rng = tr.kind === 'atk' ? 'melee' : (rosterOf(tr.id)['skr'] && tr.kind === 'skill' ? rosterOf(tr.id).skr : rosterOf(tr.id).ulr);
+  if (tr.heal) rng = 'cast';
+  c.push(['arah hadap & gerak caster', tr.casterTravel > 4 ? 'bergerak ' + tr.casterTravel + '% lebar panggung' : 'DIAM di tempat (travel ' + tr.casterTravel + '%) — cocok untuk cast, menyimpang untuk melee']);
+  Object.keys(tr.fxList).forEach(function(k){ var e = tr.fxList[k];
+    c.push(['fx ' + k, 'flip=' + e.flip + ' · berjalan=' + (e.mv ? 'YA, sx ' + Math.round(e.minSx) + '→' + Math.round(e.maxSx) : 'tidak (diam di target)')]); });
+  if (!Object.keys(tr.fxList).length) c.push(['fx', 'TIDAK ADA fx ter-spawn pada pemicu ini']);
+  c.push(['benturan sinkron', tr.deltaImpact === null ? 'tak teramati (hpDrop/sigStart hilang)' : 'Δ dari awal animasi jurus ke HP berubah = ' + tr.deltaImpact + ' ms virtual · harapan ≈ ' + tr.expected.sigStartPlus + ' ms · ' + tr.expected.label]);
+  c.push(['animasi jurus', tr.casterAnims.map(function(a){ return a[1] + '@' + a[0]; }).join(' → ')]);
+  c.push(['animasi target', tr.targetAnims.map(function(a){ return a[1] + '@' + a[0]; }).join(' → ') || '—']);
+  c.push(['knockback target', 'geser maks ' + Math.round(tr.targetMaxDisp * 10) / 10 + '% dari titik awal sampel']);
+  c.push(['piksel tergambar', 'awal caster/target ' + (tr.pxStart ? tr.pxStart.c + '/' + tr.pxStart.t : '?') + ' · min selama cast ' + tr.casterPxMin + '/' + tr.targetPxMin + (tr.vanish ? ' · ⚠️ ADA YANG HILANG (0 piksel)' : ' · tak ada yang hilang')]);
+  c.push(['klon', tr.clonesMax + ' klon teramati']);
+  c.push(['lencana damage/heal', tr.badgeSeen ? 'muncul' : 'TIDAK muncul']);
+  c.push(['error JS', tr.errors.length ? tr.errors.join(' | ') : '0']);
+  document.getElementById('checks').innerHTML = c.map(function(x){ return '• <b>' + x[0] + ':</b> ' + x[1]; }).join('<br>');
+  document.getElementById('trace').textContent = JSON.stringify(tr, null, 1);
+  document.getElementById('turninfo').textContent = 'Terakhir: ' + tr.nm + ' · ' + tr.kind + ' · ' + (tr.dir === 'foe' ? 'musuh→sekutu' : 'sekutu→musuh') + ' · ' + tr.virtMs + ' ms virtual';
+}
+/* ---------- daftar & kontrol ---------- */
+var listEl = document.getElementById('skillist');
+ROSTER.forEach(function(r){
+  ['atk', 'skill', 'ult'].forEach(function(kind){
+    var row = document.createElement('div'); row.className = 'srow';
+    row.innerHTML = '<span class="dot" id="dot-' + r.id + '-' + kind + '"></span><span class="nm">' + r.nm + ' · ' + (kind === 'atk' ? 'basic' : kind) + '</span>';
+    ['ally', 'foe'].forEach(function(dir){
+      var b = document.createElement('button');
+      b.textContent = dir === 'ally' ? '▶ S→M' : '◀ M→S';
+      b.onclick = function(){ SEL = { id: r.id, kind: kind, dir: dir }; renderSourcePanel(); castSelected(); };
+      row.appendChild(b);
+      var bb = document.createElement('button');
+      bb.className = 'bug'; bb.id = 'bug-' + r.id + '-' + kind + '-' + dir;
+      bb.textContent = '🐛'; bb.title = 'Tandai bug: ' + r.nm + ' ' + kind + ' ' + (dir === 'ally' ? 'sekutu→musuh' : 'musuh→sekutu');
+      bb.onclick = function(){ toggleBug(r.id, kind, dir, ''); };
+      row.appendChild(bb);
+    });
+    listEl.appendChild(row);
+  });
+});
+document.getElementById('st-play').onclick = function(){ castSelected(); };
+document.getElementById('st-replay').onclick = function(){ castSelected(); };
+var slowOn = false;
+document.getElementById('st-slow').onclick = function(){ slowOn = !slowOn; speedMul = slowOn ? 0.25 : 1; this.textContent = slowOn ? '🐢 Slow: NYALA (0.25×)' : '🐢 Slow 0.25×'; };
+var paused = false, prevSpeed = 1;
+document.getElementById('st-pause').onclick = function(){ paused = !paused; if (paused){ prevSpeed = speedMul; speedMul = 0.0001; this.textContent = '▶ Lanjut'; } else { speedMul = prevSpeed; this.textContent = '⏸ Jeda'; } };
+/* ---------- audit massal ---------- */
+window.__runAuditGroup = async function(group){
+  var results = [];
+  var logEl = document.getElementById('auditlog');
+  for (var i = 0; i < ROSTER.length; i++){
+    var r = ROSTER[i];
+    for (var k = 0; k < 3; k++){
+      var kind = ['atk', 'skill', 'ult'][k];
+      for (var d = 0; d < 2; d++){
+        var dir = ['ally', 'foe'][d];
+        SEL = { id: r.id, kind: kind, dir: dir };
+        logEl.textContent = 'audit: ' + r.nm + ' ' + kind + ' ' + dir + ' (' + results.length + '/54)';
+        var tr = await castSelected();
+        if (tr) results.push(tr);
+        battleToken++; phase = 'fighting';
+      }
+    }
+  }
+  window.__auditResults = results;
+  logEl.textContent = 'SELESAI: ' + results.length + ' pemicu · error total ' + results.reduce(function(s, t){ return s + t.errors.length; }, 0);
+  return results;
+};
+document.getElementById('st-audit-ally').onclick = function(){ window.__runAuditGroup('ally'); };
+/* ================= TANDAI BUG — state tersimpan lokal (localStorage) =================
+   Halaman statis: tanda hidup di browser perangkat ini (bertahan sesudah reload).
+   "Kirim ke Muse" = susun laporan teks -> clipboard + unduh .md -> user menempel ke chat. */
+var AUDIT_STATUS = {
+  'atk': '✅ sesuai (audit Muse)',
+  'haru|skill': '✅ sesuai (audit Muse)',
+  'haru|ult|ally': '⚠️ audit Muse: damage mendahului benturan hit (B7)',
+  'haru|ult|foe': '🔧 v2.5: cast generik kini rapal shifa ±5,8 dtk (dari 9,35) — tetap tanpa summon (B2)',
+  'ren|skill': '✅ sesuai (audit Muse)', 'ren|ult': '✅ sesuai; visual = skill (B8)',
+  'hana|skill': '🔧 v2.5: heal kini zhiliaoshu (pose penyembuh sumber) — tunggu playtest ulang (B1)',
+  'hana|ult': '🔧 v2.5: heal kini zhiliaoshu (pose penyembuh sumber) — tunggu playtest ulang (B1)',
+  'kaen|skill': '🔧 v2.5: Bola Api kini rapal shifa (bukan qianniao) — tunggu playtest ulang',
+  'kaen|ult|ally': '✅ sesuai — Amaterasu (audit Muse)',
+  'kaen|ult|foe': '⚠️ audit Muse: bukan Amaterasu di sisi musuh (B2)',
+  'yuki|skill': '⚠️ audit Muse: caster membeku, mojingbingjing 1 frame unik (B4)',
+  'yuki|ult': '⚠️ audit Muse: caster membeku, mojingbingjing 1 frame unik (B4)',
+  'daichi|skill': '⚠️ audit Muse: quanji generik, tanpa animasi khas (B3)',
+  'daichi|ult': '🔧 v2.5: ult cast kini rapal shifa (bukan quanji) — tetap tanpa mov khusus (B3)',
+  'akira|skill': '🔧 v2.5: skill kini feileishen teleport (klon khusus ult) — tunggu playtest ulang (B5)',
+  'akira|ult': '⚠️ audit Muse: klon OK, tanpa fx benturan (B5)',
+  'mika|skill': '🔧 v2.5: heal kini zhiliaoshu (bukan quanji) — tunggu playtest ulang (B1/B3)',
+  'mika|ult': '🔧 v2.5: heal kini zhiliaoshu (bukan quanji) — tunggu playtest ulang (B1/B3)',
+  'goro|skill': '⚠️ audit Muse: quanji generik, tanpa animasi khas (B3)',
+  'goro|ult': '🔧 v2.5: ult cast kini rapal shifa (bukan quanji) — tetap tanpa mov khusus (B3)'
+};
+function auditStatus(id, kind, dir){
+  return AUDIT_STATUS[id + '|' + kind + '|' + dir] || AUDIT_STATUS[id + '|' + kind] || AUDIT_STATUS[kind] || '—';
+}
+var BUGKEY = 'ninjaStudioBugs.v1';
+var bugs = {};
+try { bugs = JSON.parse(localStorage.getItem(BUGKEY) || '{}'); } catch(e){ bugs = {}; }
+function bugKey(id, kind, dir){ return id + '|' + kind + '|' + dir; }
+function saveBugs(){ try { localStorage.setItem(BUGKEY, JSON.stringify(bugs)); } catch(e){} }
+function kindLabel(k){ return k === 'atk' ? 'basic' : k; }
+function skillName(id, kind){ var r = rosterOf(id); return kind === 'atk' ? 'Serangan biasa' : kind === 'skill' ? r.skill : r.ult; }
+function toggleBug(id, kind, dir, note){
+  var k = bugKey(id, kind, dir);
+  if (bugs[k]) delete bugs[k];
+  else bugs[k] = { note: note || '', ts: new Date().toISOString() };
+  saveBugs(); refreshBugUI();
+}
+function refreshBugUI(){
+  Object.keys(bugs).length;
+  document.querySelectorAll('.srow').forEach(function(row){});
+  ROSTER.forEach(function(r){
+    ['atk', 'skill', 'ult'].forEach(function(kind){
+      var any = false;
+      ['ally', 'foe'].forEach(function(dir){
+        var bb = document.getElementById('bug-' + r.id + '-' + kind + '-' + dir);
+        var on = !!bugs[bugKey(r.id, kind, dir)];
+        if (bb) bb.classList.toggle('marked', on);
+        if (on) any = true;
+      });
+      var dot = document.getElementById('dot-' + r.id + '-' + kind);
+      if (dot) dot.classList.toggle('marked', any);
+    });
+  });
+  var cur = bugs[bugKey(SEL.id, SEL.kind, SEL.dir)];
+  var bm = document.getElementById('bugmark');
+  bm.classList.toggle('marked', !!cur);
+  bm.textContent = cur ? '✅ Pemicu ini SUDAH ditandai bug — ketuk untuk batal'
+                       : '🐛 Tandai pemicu ini sebagai bug (' + rosterOf(SEL.id).nm + ' · ' + kindLabel(SEL.kind) + ' · ' + (SEL.dir === 'foe' ? 'M→S' : 'S→M') + ')';
+  var keys = Object.keys(bugs).sort();
+  document.getElementById('bugsend').textContent = '📤 Kirim ke Muse (' + keys.length + ' bug)';
+  var bl = document.getElementById('buglist');
+  if (!keys.length){ bl.innerHTML = '<span style="color:var(--mut)">Belum ada bug ditandai. Mainkan pemicu, lalu ketuk 🐛 — atau ketuk 🐛 langsung di daftar kiri.</span>'; return; }
+  bl.innerHTML = '';
+  keys.forEach(function(k){
+    var p = k.split('|'), r = rosterOf(p[0]);
+    var d = document.createElement('div'); d.className = 'bi';
+    d.innerHTML = '<span>🐛 <b>' + r.nm + '</b> · ' + kindLabel(p[1]) + ' (' + skillName(p[0], p[1]) + ') · ' + (p[2] === 'foe' ? 'musuh→sekutu' : 'sekutu→musuh') + (bugs[k].note ? '<br><i>“' + bugs[k].note.replace(/</g, '&lt;') + '”</i>' : '') + '</span>';
+    var x = document.createElement('button'); x.textContent = '✕';
+    x.onclick = function(){ toggleBug(p[0], p[1], p[2], ''); };
+    d.appendChild(x); bl.appendChild(d);
+  });
+}
+function buildBugReport(){
+  var keys = Object.keys(bugs).sort();
+  var L = [];
+  L.push('LAPORAN BUG — Studio Skill Ninja Era Landscape');
+  L.push('Playtest manual Ilham · ' + new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) + ' WIB');
+  L.push('Studio: https://arena-landscape-9x7.vercel.app/studio.html');
+  L.push('');
+  L.push('Bagian yang perlu diperhatikan (' + keys.length + ' bug ditandai):');
+  keys.forEach(function(k, i){
+    var p = k.split('|'), r = rosterOf(p[0]);
+    L.push('');
+    L.push((i + 1) + '. ' + r.nm + ' — ' + kindLabel(p[1]) + ' "' + skillName(p[0], p[1]) + '" — arah ' + (p[2] === 'foe' ? 'musuh→sekutu' : 'sekutu→musuh'));
+    if (bugs[k].note) L.push('   Catatan Ilham: ' + bugs[k].note);
+    L.push('   Status audit Muse: ' + auditStatus(p[0], p[1], p[2]));
+  });
+  L.push('');
+  L.push('Tolong periksa bagian-bagian ini di SKILL-AUDIT.md dan masukkan/utamakan di batch perbaikan.');
+  return L.join('\n');
+}
+document.getElementById('bugmark').onclick = function(){
+  var note = document.getElementById('bugnote').value.trim();
+  toggleBug(SEL.id, SEL.kind, SEL.dir, note);
+  if (bugs[bugKey(SEL.id, SEL.kind, SEL.dir)]) document.getElementById('bugnote').value = '';
+};
+document.getElementById('bugsend').onclick = function(){
+  var keys = Object.keys(bugs);
+  var st = document.getElementById('bugstatus');
+  if (!keys.length){ st.textContent = 'Belum ada bug ditandai — tandai dulu dengan 🐛.'; return; }
+  var txt = buildBugReport();
+  var ta = document.getElementById('bugreport');
+  ta.value = txt; ta.style.display = 'block';
+  var done = [];
+  var dl = function(){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([txt], { type: 'text/markdown' }));
+    a.download = 'laporan-bug-studio.md'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    done.push('file .md terunduh');
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ done.push('laporan tersalin ke clipboard'); st.textContent = '✅ ' + done.join(' + ') + ' — tempel ke chat Muse.'; dl(); },
+      function(){ dl(); st.textContent = '✅ File terunduh (clipboard ditolak browser) — kirim file/teks ini ke chat Muse.'; });
+  } else { dl(); st.textContent = '✅ File terunduh — kirim file/teks ini ke chat Muse.'; }
+};
+window.__bugs = bugs;
+refreshBugUI();
+/* mulai */
+stageEl.style.backgroundImage = 'url(assets/bg/shulin.webp)';
+spLoadAll().then(function(){ renderSourcePanel(); document.getElementById('turninfo').textContent = 'Studio siap — sprite termuat.'; });
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
