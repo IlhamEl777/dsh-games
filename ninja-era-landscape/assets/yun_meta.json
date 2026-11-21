@@ -1,0 +1,91 @@
+{
+ "source": "yun",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "yun": {
+   "file": "yun_yun.webp",
+   "cell": [
+    299,
+    192
+   ],
+   "frames": 6,
+   "unique": 6,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ]
+   ],
+   "cols": 6,
+   "rows": 1,
+   "origin": [
+    102,
+    161
+   ],
+   "source_dr": 12
+  },
+  "yun_2fenshen": {
+   "file": "yun_yun_2fenshen.webp",
+   "cell": [
+    247,
+    192
+   ],
+   "frames": 6,
+   "unique": 6,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ]
+   ],
+   "cols": 6,
+   "rows": 1,
+   "origin": [
+    42,
+    161
+   ],
+   "source_dr": 11
+  }
+ }
+}

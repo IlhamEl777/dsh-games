@@ -1,0 +1,53 @@
+{
+ "source": "shanguang",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "shanguang": {
+   "file": "shanguang_shanguang.webp",
+   "cell": [
+    429,
+    303
+   ],
+   "frames": 13,
+   "unique": 7,
+   "timeline": [
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ]
+   ],
+   "cols": 7,
+   "rows": 1,
+   "origin": [
+    117,
+    230
+   ],
+   "source_dr": 26
+  }
+ }
+}

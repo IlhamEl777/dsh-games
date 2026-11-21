@@ -1,0 +1,45 @@
+{
+ "source": "zhenfu",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "zhenfu": {
+   "file": "zhenfu_zhenfu.webp",
+   "cell": [
+    208,
+    73
+   ],
+   "frames": 11,
+   "unique": 4,
+   "timeline": [
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     0,
+     1
+    ]
+   ],
+   "cols": 4,
+   "rows": 1,
+   "origin": [
+    104,
+    37
+   ],
+   "source_dr": 21
+  }
+ }
+}

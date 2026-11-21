@@ -1,0 +1,33 @@
+{
+ "source": "zhan1",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "zhan1": {
+   "file": "zhan1_zhan1.webp",
+   "cell": [
+    280,
+    242
+   ],
+   "frames": 3,
+   "unique": 2,
+   "timeline": [
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "cols": 2,
+   "rows": 1,
+   "origin": [
+    -35,
+    176
+   ],
+   "source_dr": 6
+  }
+ }
+}

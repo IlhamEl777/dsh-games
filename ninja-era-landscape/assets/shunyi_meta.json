@@ -1,0 +1,29 @@
+{
+ "source": "shunyi",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "shunyi_youshang": {
+   "file": "shunyi_shunyi_youshang.webp",
+   "cell": [
+    75,
+    89
+   ],
+   "frames": 2,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     2
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    -42,
+    139
+   ],
+   "source_dr": 3
+  }
+ }
+}
