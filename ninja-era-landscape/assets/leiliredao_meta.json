@@ -1,0 +1,65 @@
+{
+ "source": "leiliredao",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "leiliredao": {
+   "file": "leiliredao_leiliredao.webp",
+   "cell": [
+    450,
+    280
+   ],
+   "frames": 10,
+   "unique": 10,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     9,
+     1
+    ]
+   ],
+   "cols": 8,
+   "rows": 2,
+   "origin": [
+    203,
+    234
+   ],
+   "source_dr": 19
+  }
+ }
+}

@@ -1,0 +1,587 @@
+{
+ "source": "kakaxi",
+ "fps": 12,
+ "scale": 1.0,
+ "animations": {
+  "daiji": {
+   "file": "kakaxi_daiji.webp",
+   "cell": [
+    133,
+    184
+   ],
+   "frames": 15,
+   "unique": 15,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     9,
+     1
+    ],
+    [
+     10,
+     1
+    ],
+    [
+     11,
+     1
+    ],
+    [
+     12,
+     1
+    ],
+    [
+     13,
+     1
+    ],
+    [
+     14,
+     1
+    ]
+   ],
+   "cols": 8,
+   "rows": 2,
+   "origin": [
+    76,
+    183
+   ],
+   "source_dr": 30
+  },
+  "paobu": {
+   "file": "kakaxi_paobu.webp",
+   "cell": [
+    132,
+    175
+   ],
+   "frames": 5,
+   "unique": 3,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "cols": 3,
+   "rows": 1,
+   "origin": [
+    38,
+    174
+   ],
+   "source_dr": 10
+  },
+  "quanji": {
+   "file": "kakaxi_quanji.webp",
+   "cell": [
+    195,
+    177
+   ],
+   "frames": 15,
+   "unique": 6,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     10
+    ]
+   ],
+   "cols": 6,
+   "rows": 1,
+   "origin": [
+    73,
+    176
+   ],
+   "source_dr": 30
+  },
+  "beiji": {
+   "file": "kakaxi_beiji.webp",
+   "cell": [
+    214,
+    186
+   ],
+   "frames": 15,
+   "unique": 3,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     13
+    ]
+   ],
+   "cols": 3,
+   "rows": 1,
+   "origin": [
+    140,
+    185
+   ],
+   "source_dr": 30
+  },
+  "daodi": {
+   "file": "kakaxi_daodi.webp",
+   "cell": [
+    253,
+    227
+   ],
+   "frames": 23,
+   "unique": 2,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     22
+    ]
+   ],
+   "cols": 2,
+   "rows": 1,
+   "origin": [
+    179,
+    183
+   ],
+   "source_dr": 45
+  },
+  "siwang": {
+   "file": "kakaxi_siwang.webp",
+   "cell": [
+    184,
+    146
+   ],
+   "frames": 25,
+   "unique": 2,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     0,
+     22
+    ]
+   ],
+   "cols": 2,
+   "rows": 1,
+   "origin": [
+    179,
+    102
+   ],
+   "source_dr": 50
+  },
+  "shengli": {
+   "file": "kakaxi_shengli.webp",
+   "cell": [
+    146,
+    224
+   ],
+   "frames": 18,
+   "unique": 11,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     9,
+     1
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     10,
+     1
+    ]
+   ],
+   "cols": 8,
+   "rows": 2,
+   "origin": [
+    76,
+    221
+   ],
+   "source_dr": 35
+  },
+  "leiqie": {
+   "file": "kakaxi_leiqie.webp",
+   "cell": [
+    426,
+    177
+   ],
+   "frames": 20,
+   "unique": 7,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     13
+    ]
+   ],
+   "cols": 7,
+   "rows": 1,
+   "origin": [
+    73,
+    176
+   ],
+   "source_dr": 40
+  },
+  "shifaAReady": {
+   "file": "kakaxi_shifaAReady.webp",
+   "cell": [
+    133,
+    183
+   ],
+   "frames": 12,
+   "unique": 4,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "cols": 4,
+   "rows": 1,
+   "origin": [
+    76,
+    182
+   ],
+   "source_dr": 23
+  },
+  "shifaAHit": {
+   "file": "kakaxi_shifaAHit.webp",
+   "cell": [
+    133,
+    183
+   ],
+   "frames": 12,
+   "unique": 4,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "cols": 4,
+   "rows": 1,
+   "origin": [
+    76,
+    182
+   ],
+   "source_dr": 23
+  },
+  "zhiliaoshu": {
+   "file": "kakaxi_zhiliaoshu.webp",
+   "cell": [
+    130,
+    177
+   ],
+   "frames": 8,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     8
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    69,
+    176
+   ],
+   "source_dr": 15
+  },
+  "jiaxue": {
+   "file": "kakaxi_jiaxue.webp",
+   "cell": [
+    130,
+    177
+   ],
+   "frames": 15,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     15
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    69,
+    176
+   ],
+   "source_dr": 30
+  },
+  "luolei": {
+   "file": "kakaxi_luolei.webp",
+   "cell": [
+    130,
+    177
+   ],
+   "frames": 13,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     13
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    69,
+    176
+   ],
+   "source_dr": 25
+  },
+  "shenwei": {
+   "file": "kakaxi_shenwei.webp",
+   "cell": [
+    130,
+    177
+   ],
+   "frames": 26,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     26
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    69,
+    176
+   ],
+   "source_dr": 52
+  }
+ }
+}

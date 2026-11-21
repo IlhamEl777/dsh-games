@@ -1,0 +1,61 @@
+{
+ "source": "kuileishu",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "kuileishu": {
+   "file": "kuileishu_kuileishu.webp",
+   "cell": [
+    229,
+    258
+   ],
+   "frames": 24,
+   "unique": 9,
+   "timeline": [
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     9
+    ]
+   ],
+   "cols": 8,
+   "rows": 2,
+   "origin": [
+    -86,
+    191
+   ],
+   "source_dr": 48
+  }
+ }
+}

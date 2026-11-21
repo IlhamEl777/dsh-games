@@ -1,0 +1,567 @@
+{
+ "source": "jingye",
+ "fps": 12,
+ "scale": 1.0,
+ "animations": {
+  "daiji": {
+   "file": "jingye_daiji.webp",
+   "cell": [
+    105,
+    162
+   ],
+   "frames": 15,
+   "unique": 15,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     9,
+     1
+    ],
+    [
+     10,
+     1
+    ],
+    [
+     11,
+     1
+    ],
+    [
+     12,
+     1
+    ],
+    [
+     13,
+     1
+    ],
+    [
+     14,
+     1
+    ]
+   ],
+   "cols": 8,
+   "rows": 2,
+   "origin": [
+    64,
+    161
+   ],
+   "source_dr": 30
+  },
+  "paobu": {
+   "file": "jingye_paobu.webp",
+   "cell": [
+    115,
+    153
+   ],
+   "frames": 5,
+   "unique": 3,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     1,
+     1
+    ]
+   ],
+   "cols": 3,
+   "rows": 1,
+   "origin": [
+    41,
+    152
+   ],
+   "source_dr": 10
+  },
+  "quanji": {
+   "file": "jingye_quanji.webp",
+   "cell": [
+    182,
+    159
+   ],
+   "frames": 15,
+   "unique": 6,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     10
+    ]
+   ],
+   "cols": 6,
+   "rows": 1,
+   "origin": [
+    71,
+    159
+   ],
+   "source_dr": 30
+  },
+  "beiji": {
+   "file": "jingye_beiji.webp",
+   "cell": [
+    175,
+    171
+   ],
+   "frames": 15,
+   "unique": 3,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     13
+    ]
+   ],
+   "cols": 3,
+   "rows": 1,
+   "origin": [
+    110,
+    170
+   ],
+   "source_dr": 30
+  },
+  "daodi": {
+   "file": "jingye_daodi.webp",
+   "cell": [
+    221,
+    187
+   ],
+   "frames": 23,
+   "unique": 2,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     22
+    ]
+   ],
+   "cols": 2,
+   "rows": 1,
+   "origin": [
+    156,
+    160
+   ],
+   "source_dr": 45
+  },
+  "siwang": {
+   "file": "jingye_siwang.webp",
+   "cell": [
+    160,
+    117
+   ],
+   "frames": 25,
+   "unique": 2,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     0,
+     22
+    ]
+   ],
+   "cols": 2,
+   "rows": 1,
+   "origin": [
+    156,
+    90
+   ],
+   "source_dr": 50
+  },
+  "shengli": {
+   "file": "jingye_shengli.webp",
+   "cell": [
+    124,
+    203
+   ],
+   "frames": 18,
+   "unique": 11,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     7,
+     1
+    ],
+    [
+     8,
+     1
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     1
+    ],
+    [
+     9,
+     1
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     10,
+     1
+    ]
+   ],
+   "cols": 8,
+   "rows": 2,
+   "origin": [
+    63,
+    201
+   ],
+   "source_dr": 35
+  },
+  "shifaAReady": {
+   "file": "jingye_shifaAReady.webp",
+   "cell": [
+    108,
+    162
+   ],
+   "frames": 12,
+   "unique": 4,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "cols": 4,
+   "rows": 1,
+   "origin": [
+    63,
+    161
+   ],
+   "source_dr": 23
+  },
+  "shifaAHit": {
+   "file": "jingye_shifaAHit.webp",
+   "cell": [
+    108,
+    162
+   ],
+   "frames": 12,
+   "unique": 4,
+   "timeline": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     3
+    ]
+   ],
+   "cols": 4,
+   "rows": 1,
+   "origin": [
+    63,
+    161
+   ],
+   "source_dr": 23
+  },
+  "zhiliaoshu": {
+   "file": "jingye_zhiliaoshu.webp",
+   "cell": [
+    104,
+    155
+   ],
+   "frames": 8,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     8
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    59,
+    154
+   ],
+   "source_dr": 15
+  },
+  "jinghua": {
+   "file": "jingye_jinghua.webp",
+   "cell": [
+    104,
+    155
+   ],
+   "frames": 20,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     20
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    59,
+    154
+   ],
+   "source_dr": 40
+  },
+  "hulu": {
+   "file": "jingye_hulu.webp",
+   "cell": [
+    104,
+    155
+   ],
+   "frames": 30,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     30
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    59,
+    154
+   ],
+   "source_dr": 60
+  },
+  "bianfu": {
+   "file": "jingye_bianfu.webp",
+   "cell": [
+    104,
+    155
+   ],
+   "frames": 15,
+   "unique": 1,
+   "timeline": [
+    [
+     0,
+     15
+    ]
+   ],
+   "cols": 1,
+   "rows": 1,
+   "origin": [
+    59,
+    154
+   ],
+   "source_dr": 30
+  },
+  "shunshenshu": {
+   "file": "jingye_shunshenshu.webp",
+   "cell": [
+    105,
+    162
+   ],
+   "frames": 18,
+   "unique": 2,
+   "timeline": [
+    [
+     0,
+     6
+    ],
+    [
+     1,
+     12
+    ]
+   ],
+   "cols": 2,
+   "rows": 1,
+   "origin": [
+    63,
+    161
+   ],
+   "source_dr": 35
+  }
+ }
+}

@@ -1,0 +1,53 @@
+{
+ "source": "juqi5",
+ "fps": 12,
+ "scale": 0.75,
+ "animations": {
+  "juqi5": {
+   "file": "juqi5_juqi5.webp",
+   "cell": [
+    150,
+    152
+   ],
+   "frames": 11,
+   "unique": 7,
+   "timeline": [
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     5,
+     1
+    ],
+    [
+     6,
+     2
+    ]
+   ],
+   "cols": 7,
+   "rows": 1,
+   "origin": [
+    -19,
+    142
+   ],
+   "source_dr": 22
+  }
+ }
+}
