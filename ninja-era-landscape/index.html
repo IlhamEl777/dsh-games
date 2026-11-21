@@ -2123,10 +2123,10 @@ function mountHomeSprites(){
   var wrap = document.getElementById('home-chars'); if (!wrap) return;
   wrap.innerHTML = ''; homeInst = [];
   if (!SP.ready) return;
-  var xs = [35, 50, 65];
+  var xs = [33, 50, 66];
   villageTeam().forEach(function(r, i){
     var host = document.createElement('div'); host.className = 'hchar';
-    host.style.left = xs[i] + '%'; host.style.bottom = '18%';
+    host.style.left = xs[i] + '%'; host.style.bottom = '15.7%';
     var cv = document.createElement('canvas'); host.appendChild(cv);
     var lb = document.createElement('div'); lb.className = 'hchar-nm'; lb.textContent = r.nm;
     host.appendChild(lb); wrap.appendChild(host);
@@ -2136,7 +2136,7 @@ function mountHomeSprites(){
 function drawHomeSprites(){
   var scr = document.getElementById('screen-home');
   if (!scr || scr.classList.contains('hidden')) return;
-  var fitH = scr.clientHeight * 0.215; if (!fitH) return;
+  var fitH = scr.clientHeight * 0.20; if (!fitH) return;
   homeInst.forEach(function(p){
     var fr = spFrame(p.body, 'daiji', p.t0, true); if (!fr) return;
     var K = fitH / fr.a.cell[1];
