@@ -266,7 +266,7 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
 .hup{display:flex;flex-direction:column;align-items:center;gap:1px;background:rgba(10,15,28,.72);border:1px solid var(--line);border-radius:10px;padding:5px 7px;color:#dbe4ff;font-size:10px;min-width:52px}
 .hup img{height:30px}
 .hup.locked{filter:grayscale(.85);opacity:.55}
-#home-buildings{position:relative;z-index:2;margin-top:auto;display:flex;gap:4px;width:100%;padding:0 10px;overflow-x:auto;justify-content:flex-start}
+#home-buildings{position:relative;z-index:2;margin-top:auto;display:flex;gap:4px;width:100%;padding:0 10px 124px;overflow-x:auto;justify-content:flex-start}
 .bld{display:flex;flex-direction:column;align-items:center;gap:0;background:none;border:none;cursor:pointer;padding:2px;min-width:86px}
 .bld img{height:74px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
 .bld span{font-size:10.5px;color:#fff;font-weight:700;text-shadow:0 1px 4px #000;background:rgba(10,15,28,.55);border-radius:99px;padding:1px 8px;margin-top:-8px}
@@ -282,6 +282,21 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
 #home-panel .hp-d{font-size:12.5px;color:#c6d2f5;line-height:1.5}
 #home-panel .hp-p{font-size:12px;color:#ffd54f;margin-top:5px}
 #home-panel button{margin-top:9px}
+/* ===== v3.9 (Layout CCBI L2): menu Home persis CCBI 1152x720 ===== */
+#home-ccb{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3;pointer-events:none}
+#home-box{pointer-events:none;overflow:visible}
+#home-box .ccb-menubtn{pointer-events:auto}
+#home-box .ccb-menubtn.locked{filter:grayscale(.85);opacity:.6}
+#home-box .ccb-menubtn.locked:hover{filter:grayscale(.85) brightness(1.15)}
+.hbgt{position:absolute;left:10px;bottom:10px;z-index:4;background:rgba(10,15,28,.82);border:1.5px solid var(--line);border-radius:99px;padding:7px 13px;color:#eef1ff;font-size:12px;font-weight:700;cursor:pointer}
+.hbgt:hover{border-color:var(--acc)}
+/* ===== v3.10 (Desa Hidup): tim idle di desa + HUD gaya asli ===== */
+#home-chars{position:absolute;inset:0;z-index:2;pointer-events:none}
+.hchar{position:absolute;width:0;height:0}
+.hchar canvas{position:absolute}
+.hchar-nm{position:absolute;top:5px;left:0;transform:translateX(-50%);font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px #000;background:rgba(10,15,28,.45);padding:0 7px;border-radius:99px;white-space:nowrap}
+#home-player{background:rgba(10,15,28,.55);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:5px 12px 5px 5px}
+#hp-lv{min-width:47px;height:47px;border-radius:12px;background:linear-gradient(180deg,#c23a32,#7c1d18);border:2px solid #f2c14e;color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
 #rotate-hint{display:none;position:fixed;inset:0;background:rgba(3,5,10,.93);z-index:99;align-items:center;justify-content:center;text-align:center;font-size:17px;padding:24px}
 @media (orientation:portrait) and (max-width:560px){#rotate-hint{display:flex}}
 /* ===== v2.6 tampilan mobile: panggung full-bleed, log jadi overlay, bar ramping ===== */
@@ -366,29 +381,14 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
         </aside>
         <section id="screen-home" class="screen">
           <div id="home-bg"></div><div id="home-shade"></div>
+          <div id="home-chars"></div>
+          <div id="home-ccb"><div class="ccb-box" id="home-box"></div></div>
+          <button id="home-bgtoggle" class="hbgt">🌸 Ganti Suasana</button>
           <div id="home-top">
             <div id="home-player"><span id="hp-lv">Lv 1</span><div id="hp-expbar"><div id="hp-expfill" style="width:0%"></div></div><span id="hp-exp">EXP 0</span><span id="hp-silver">🪙 0</span><span id="hp-prog">Stage 0/724</span></div>
-            <div id="home-upmenu">
-              <div class="hup locked"><img src="assets/home/h_xuanshang.webp" alt=""><span>Quest 🔒</span></div>
-              <div class="hup locked"><img src="assets/home/h_email.webp" alt=""><span>Mail 🔒</span></div>
-              <div class="hup locked"><img src="assets/home/h_huodong.webp" alt=""><span>Event 🔒</span></div>
-              <div class="hup locked"><img src="assets/home/h_shangdian.webp" alt=""><span>Toko 🔒</span></div>
-              <div class="hup locked"><img src="assets/home/duihuan.webp" alt=""><span>Tukar 🔒</span></div>
-            </div>
           </div>
           <div id="home-buildings"></div>
           <div id="home-panel" class="hidden"><div class="hp-t" id="home-panel-title"></div><div class="hp-d" id="home-panel-desc"></div><div class="hp-p" id="home-panel-prod"></div><button id="home-panel-close">✖ Tutup</button></div>
-          <div id="home-menu">
-            <button class="hbtn" id="home-deploy"><img src="assets/home/h_buzhen.webp" alt=""><span>⚔️ Deploy</span></button>
-            <button class="hbtn" id="home-bag"><img src="assets/home/h_beibao.webp" alt=""><span>🎒 Tas</span></button>
-            <button class="hbtn locked" disabled><img src="assets/home/h_huoban.webp" alt=""><span>Partner 🔒</span></button>
-            <button class="hbtn locked" disabled><img src="assets/home/h_duanzao.webp" alt=""><span>Forge 🔒</span></button>
-            <button class="hbtn locked" disabled><img src="assets/home/h_shiyanshi.webp" alt=""><span>Lab 🔒</span></button>
-            <button class="hbtn locked" disabled><img src="assets/home/h_juntuan.webp" alt=""><span>Klan 🔒</span></button>
-            <button class="hbtn locked" disabled><img src="assets/home/h_paihang.webp" alt=""><span>Peringkat 🔒</span></button>
-            <button class="hbtn locked" disabled><img src="assets/home/h_haoyou.webp" alt=""><span>Teman 🔒</span></button>
-            <button class="hbtn" id="home-bgtoggle"><span style="font-size:20px">🌸</span><span>Ganti Suasana</span></button>
-          </div>
         </section>
         <section id="screen-pick" class="screen mode-slide hidden">
           <h1>🥷 NINJA <span class="era">ERA</span></h1>
@@ -993,6 +993,7 @@ function loop(){
     var K = fighterK();
     ents.forEach(function(e){ drawOn(e.cv, frameFor(e.f), K, e.f.foe !== e.rev); });
     cloneList.forEach(function(c){ drawOn(c.cv, spFrame(c.body, c.anim, c.t0, c.loop), K, c.flip); });
+    if (window.homeInst && homeInst.length) drawHomeSprites();
     pickInst.forEach(function(p){ var fr = spFrame(p.body, 'daiji', p.t0, true); var K = p.k || 0.5; if (fr && p.fitH) K = p.fitH / fr.a.cell[1]; drawOn(p.cv, fr, K, false, p.gy || 96); if (fr && p.fitH){ p.cv.style.left = (p.cx - fr.a.cell[0] * K / 2) + 'px'; p.cv.style.top = ((p.gy || 96) - fr.a.cell[1] * K) + 'px'; } });
     fxList = fxList.filter(function(x){
       var m = SP.meta[x.name], a = m && m.animations[x.an];
@@ -1814,7 +1815,7 @@ var ccbScale = 1;
 function ccbFit(){
   var s = Math.min(stageEl.clientWidth / 1152, stageEl.clientHeight / 720);
   ccbScale = s; window.__ccbScale = s;
-  ['adv-world-box', 'adv-panel'].forEach(function(id){
+  ['adv-world-box', 'adv-panel', 'home-box'].forEach(function(id){
     var b = document.getElementById(id);
     b.style.width = (1152 * s) + 'px'; b.style.height = (720 * s) + 'px';
   });
@@ -1910,7 +1911,7 @@ document.getElementById('btn-world-back').onclick = function(){
   renderWorld(); ccbFit();
 };
 window.addEventListener('resize', function(){
-  if (!document.getElementById('screen-stages').classList.contains('hidden')) ccbFit();
+  if (!document.getElementById('screen-stages').classList.contains('hidden') || !document.getElementById('screen-home').classList.contains('hidden')) ccbFit();
 });
 function showStageSelect(){
   phase = 'title'; battleToken++;
@@ -2043,6 +2044,42 @@ function refreshHome(){
     bw.appendChild(b);
   });
 }
+/* ===== v3.9 (Layout CCBI L2): renderer menu Home persis CCBI ===== */
+var HOME_LAYOUT = {"design": [1152, 720], "bottomOrigin": [1152, 34], "upOrigin": [1152, 720], "bottom": [{"id": "haoyou", "img": "h_haoyou", "cx": 1070.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 88.0, "h": 78.0, "sx": 1, "sy": 1}, {"id": "beibao", "img": "h_beibao", "cx": 882.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 96.0, "h": 77.0, "sx": 1, "sy": 1}, {"id": "duanzao", "img": "h_duanzao", "cx": 802.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 69.0, "h": 82.0, "sx": 1, "sy": 1}, {"id": "shiyanshi", "img": "h_shiyanshi", "cx": 716.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 98.0, "h": 82.0, "sx": 1, "sy": 1}, {"id": "huoban", "img": "h_huoban", "cx": 636.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 75.0, "h": 85.0, "sx": 1, "sy": 1}, {"id": "buzhen", "img": "h_buzhen", "cx": 546.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 80.0, "h": 88.0, "sx": 1, "sy": 1}, {"id": "paibing", "img": "h_paibing", "cx": 452.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 90.0, "h": 74.0, "sx": 1, "sy": 1}, {"id": "jia", "img": "h_jia", "cx": 1154.0, "cy": 34.0, "anc": [0.5, 0.5], "w": 67.0, "h": 67.0, "sx": 1, "sy": 1}, {"id": "paihangbang", "img": "h_paihang", "cx": 357.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 108.0, "h": 81.0, "sx": 1, "sy": 1}, {"id": "juntuan", "img": "h_juntuan", "cx": 974.0, "cy": 0.0, "anc": [0.5, 0.0], "w": 94.0, "h": 84.0, "sx": 1, "sy": 1}], "up": [{"id": "adventure", "img": "h_chucun", "cx": 1152.0, "cy": 720.0, "anc": [1.0, 1.0], "w": 95.0, "h": 101.0, "sx": 1, "sy": 1}, {"id": "jiangli", "img": "h_huodong", "cx": 1050.0, "cy": 722.0, "anc": [1.0, 1.0], "w": 93.0, "h": 85.0, "sx": 1, "sy": 1}, {"id": "homeBtn", "img": "jincun", "cx": 1152.0, "cy": 720.0, "anc": [1.0, 1.0], "w": 95.0, "h": 101.0, "sx": 1, "sy": 1}, {"id": "duihuan", "img": "duihuan", "cx": 953.0, "cy": 720.0, "anc": [1.0, 1.0], "w": 93.0, "h": 82.0, "sx": 1, "sy": 1}, {"id": "quest", "img": "questBg", "cx": 1142.0, "cy": 616.0, "anc": [1.0, 1.0], "w": 80.0, "h": 80.0, "sx": 1, "sy": 1}, {"id": "xuanshang", "img": "h_xuanshang", "cx": 1101.0, "cy": 486.0, "anc": [0.5, 0.5], "w": 84.0, "h": 85.0, "sx": 1, "sy": 1}, {"id": "wsznBtn", "img": "h_wszn", "cx": 867.0, "cy": 621.0, "anc": [1.0, 1.0], "w": 119.0, "h": 89.0, "sx": 1, "sy": 1}, {"id": "RSYZ_btn", "img": "h_RJDZ", "cx": 1148.0, "cy": 437.0, "anc": [1.0, 1.0], "w": 87.0, "h": 90.0, "sx": 1, "sy": 1}, {"id": "email", "img": "h_email", "cx": 947.0, "cy": 613.0, "anc": [1.0, 1.0], "w": 85.0, "h": 79.0, "sx": 1, "sy": 1}, {"id": "redian", "img": "h_redian", "cx": 1046.0, "cy": 618.0, "anc": [1.0, 1.0], "w": 86.0, "h": 85.0, "sx": 1, "sy": 1}, {"id": "shangBtn", "img": "h_shangdian", "cx": 1143.0, "cy": 340.0, "anc": [1.0, 1.0], "w": 83.0, "h": 89.0, "sx": 1, "sy": 1}], "kids": [{"id": "quest/kuang", "img": "questBg1", "cx": 1102.0, "cy": 576.0, "anc": [0.5, 0.5], "w": 73.0, "h": 73.0, "sx": 1, "sy": 1}]};
+var HOME_MENU_LABEL = {haoyou: 'Teman', duanzao: 'Forge', shiyanshi: 'Lab', huoban: 'Partner',
+  paibing: 'Paibing', paihangbang: 'Peringkat', juntuan: 'Klan', adventure: 'Penyimpanan',
+  jiangli: 'Hadiah', duihuan: 'Tukar', quest: 'Quest', xuanshang: 'Bounty', wsznBtn: 'Panduan',
+  RSYZ_btn: 'RJDZ', email: 'Mail', redian: 'Event', shangBtn: 'Toko'};
+function renderHomeMenus(){
+  var box = document.getElementById('home-box');
+  if (!box || box.childElementCount) return;
+  function add(e, live){
+    var b = document.createElement('button');
+    b.className = 'ccb-menubtn'; b.dataset.menu = e.id;
+    var im = document.createElement('img'); im.src = 'assets/home/' + e.img + '.webp'; im.alt = e.id;
+    b.appendChild(im); ccbPlace(b, e); box.appendChild(b);
+    if (e.id === 'buzhen') b.id = 'home-deploy';
+    if (e.id === 'beibao') b.id = 'home-bag';
+    if (!live){
+      if (e.id === 'jia' || e.id === 'homeBtn'){
+        b.onclick = function(){ sfx('click', 0.4); document.getElementById('turninfo').textContent = '🏠 Kamu sudah di Desa.'; };
+      } else {
+        b.classList.add('locked');
+        (function(id){ b.onclick = function(){ sfx('click', 0.4);
+          document.getElementById('turninfo').textContent = '🔒 ' + (HOME_MENU_LABEL[id] || id) + ' — sistemnya belum dibangun.'; }; })(e.id);
+      }
+    }
+    return b;
+  }
+  HOME_LAYOUT.bottom.forEach(function(e){ add(e, e.id === 'buzhen' || e.id === 'beibao'); });
+  HOME_LAYOUT.up.forEach(function(e){ add(e, false); });
+  (HOME_LAYOUT.kids || []).forEach(function(k){
+    var im = document.createElement('img');
+    im.className = 'ccb-el'; im.src = 'assets/home/' + k.img + '.webp'; im.alt = '';
+    ccbPlace(im, k); box.appendChild(im);
+  });
+}
+renderHomeMenus();
 function showHome(){
   phase = 'title'; battleToken++;
   document.getElementById('vicpanel').classList.remove('on');
@@ -2053,7 +2090,7 @@ function showHome(){
   document.getElementById('home-panel').classList.add('hidden');
   document.getElementById('screen-home').classList.remove('hidden');
   document.getElementById('turninfo').textContent = '🏠 Desa — ketuk Deploy untuk menyusun tim.';
-  refreshHome(); refreshTop();
+  renderHomeMenus(); ccbFit(); refreshHome(); refreshTop(); mountHomeSprites();
 }
 document.getElementById('home-deploy').onclick = function(){
   sfx('click', 0.6);
@@ -2074,6 +2111,60 @@ document.getElementById('home-bag').onclick = function(){
   document.getElementById('home-panel-prod').textContent = 'Silver tersimpan: 🪙 ' + SAVE.silver + ' · EXP ' + SAVE.exp + ' (Lv ' + SAVE.lv + ')';
   document.getElementById('home-panel').classList.remove('hidden');
 };
+
+/* ===== v3.10 (Desa Hidup): tim idle di pelataran + saklar menu jia ===== */
+var homeInst = [];
+var homeMenuOpen = true;
+function villageTeam(){
+  var ids = (typeof pick !== 'undefined' && pick.length === 3) ? pick : [17, 18, 27];
+  return ids.map(function(oid){ return ROSTER_OFFICIAL.find(function(r){ return r.oid === oid; }); }).filter(Boolean);
+}
+function mountHomeSprites(){
+  var wrap = document.getElementById('home-chars'); if (!wrap) return;
+  wrap.innerHTML = ''; homeInst = [];
+  if (!SP.ready) return;
+  var xs = [35, 50, 65];
+  villageTeam().forEach(function(r, i){
+    var host = document.createElement('div'); host.className = 'hchar';
+    host.style.left = xs[i] + '%'; host.style.bottom = '18%';
+    var cv = document.createElement('canvas'); host.appendChild(cv);
+    var lb = document.createElement('div'); lb.className = 'hchar-nm'; lb.textContent = r.nm;
+    host.appendChild(lb); wrap.appendChild(host);
+    homeInst.push({ cv: cv, body: r.body, t0: vnow() + i * 350 });
+  });
+}
+function drawHomeSprites(){
+  var scr = document.getElementById('screen-home');
+  if (!scr || scr.classList.contains('hidden')) return;
+  var fitH = scr.clientHeight * 0.215; if (!fitH) return;
+  homeInst.forEach(function(p){
+    var fr = spFrame(p.body, 'daiji', p.t0, true); if (!fr) return;
+    var K = fitH / fr.a.cell[1];
+    drawOn(p.cv, fr, K, false, 0);
+    p.cv.style.left = (-fr.a.cell[0] * K / 2) + 'px';
+    p.cv.style.top = (-fr.a.cell[1] * K) + 'px';
+  });
+}
+function toggleHomeMenu(){
+  homeMenuOpen = !homeMenuOpen;
+  HOME_LAYOUT.bottom.forEach(function(e){
+    if (e.id === 'jia') return;
+    var b = document.querySelector('#home-box [data-menu="' + e.id + '"]');
+    if (b) b.style.display = homeMenuOpen ? '' : 'none';
+  });
+  var j = document.querySelector('#home-box [data-menu="jia"] img');
+  if (j) j.src = homeMenuOpen ? 'assets/map/X.webp' : 'assets/home/h_jia.webp';
+  sfx('click', 0.5);
+}
+(function(){
+  var jia = document.querySelector('#home-box [data-menu="jia"]');
+  if (jia) jia.onclick = toggleHomeMenu;
+  var jimg = document.querySelector('#home-box [data-menu="jia"] img');
+  if (jimg) jimg.src = 'assets/map/X.webp';
+  var iv = setInterval(function(){
+    if (SP.ready){ clearInterval(iv); mountHomeSprites(); }
+  }, 600);
+})();
 
 /* ===== tombol ===== */
 document.getElementById('btn-speed').onclick = function(){
