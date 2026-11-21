@@ -231,6 +231,28 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
 .advbtn .af{font-size:11.5px;color:#9aa7cf;margin-top:2px;line-height:1.45}
 .advbtn .ar{font-size:11px;color:#ffd54f;margin-top:2px}
 #btn-stages-back{margin-top:12px}
+/* ===== v3.8 (Layout CCBI L1): Peta Adventure persis CCBI 1152x720 ===== */
+#adv-world{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0b1220;z-index:5}
+#adv-world.hidden{display:none}
+#adv-chapter.hidden{display:none}
+.ccb-box{position:relative;flex:0 0 auto;overflow:hidden}
+.ccb-el{position:absolute;display:block;pointer-events:none}
+.ccb-landmark{position:absolute;padding:0;border:none;background:none;cursor:pointer;pointer-events:auto}
+.ccb-landmark img{display:block;width:100%;height:100%}
+.ccb-landmark:hover{filter:brightness(1.2)}
+.ccb-landmark .lm-done{position:absolute;top:-6px;right:-4px;color:#57d977;font-size:15px;text-shadow:0 1px 3px #000}
+.ccb-menubtn{position:absolute;padding:0;border:none;background:none;cursor:pointer;pointer-events:auto}
+.ccb-menubtn img{display:block;width:100%;height:100%}
+.ccb-menubtn:hover{filter:brightness(1.2)}
+#btn-world-back{margin:12px 8px 0 0}
+#adv-panelbox{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(3,5,10,.45);z-index:30}
+#adv-panelbox.hidden{display:none}
+#adv-panel{overflow:visible;max-width:none;width:auto;margin:0;background:none;border:none;border-radius:0;padding:0}
+.ap-lab{position:absolute;color:#fff;text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.55);white-space:nowrap;pointer-events:none;font-weight:700}
+#ap-foes{color:#dbe4ff;font-weight:400}
+#ap-reward{color:#ffd54f}
+#ap-note{color:#9aa7cf;font-weight:400}
+#adv-enter span{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);color:#fff;font-weight:900;text-shadow:0 1px 3px #000;pointer-events:none}
 /* ===== v3.7 (Fase 5.4c): Home/Desa ===== */
 #screen-home{padding:0;overflow:hidden;background:#0b1220}
 #home-bg{position:absolute;inset:0;background-size:cover;background-position:center 30%}
@@ -395,6 +417,8 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
           <button id="btn-pick-home" style="margin-top:8px">🏠 Kembali ke Desa</button>
         </section>
         <section id="screen-stages" class="screen hidden">
+          <div id="adv-world"><div class="ccb-box" id="adv-world-box"></div></div>
+          <div id="adv-chapter" class="hidden">
           <h1>🗺️ PETA <span class="era">STAGE</span></h1>
           <p class="sub">Adventure resmi — 12 Bab × mode Biasa &amp; Elite (724 stage). Pilih stage untuk bertarung!</p>
           <div id="adv-chips"></div>
@@ -404,13 +428,21 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
           </div>
           <div id="adv-maphead"><img id="adv-landmark" alt=""><img id="adv-nameplate" alt=""><span id="adv-maptitle"></span></div>
           <div id="adv-map"></div>
-          <div id="adv-panel" class="hidden">
-            <div class="ap-t" id="ap-title"></div>
-            <div class="ap-f" id="ap-foes"></div>
-            <div class="ap-r" id="ap-reward"></div>
-            <div class="ap-btns"><button class="primary" id="adv-enter">⚔️ Masuk Battle</button><button id="adv-close">✖ Tutup</button></div>
-          </div>
+          <button id="btn-world-back">🗺️ Peta Dunia</button>
           <button id="btn-stages-back">⬅️ Kembali ke Pilih Tim</button>
+          </div>
+          <div id="adv-panelbox" class="hidden"><div class="ccb-box" id="adv-panel">
+            <img class="ccb-el" id="ap-bg" alt="">
+            <img class="ccb-el" id="ap-gmbg" alt="">
+            <div class="ap-lab" id="ap-title"></div>
+            <div class="ap-lab" id="ap-foes"></div>
+            <div class="ap-lab" id="ap-reward"></div>
+            <div class="ap-lab" id="ap-note"></div>
+            <img class="ccb-el" id="ap-energy-icon" alt="">
+            <div class="ap-lab" id="ap-energy"></div>
+            <button class="ccb-btn ccb-menubtn" id="adv-enter"><img src="assets/map/sudu2.webp" alt=""><span>MASUK</span></button>
+            <button class="ccb-btn ccb-menubtn" id="adv-close"><img src="assets/map/X.webp" alt=""></button>
+          </div></div>
         </section>
         <section id="screen-end" class="screen hidden">
           <div class="big" id="end-emoji">🏆</div>
@@ -1776,6 +1808,110 @@ function advNext(){
   for (var i = 0; i < L.length; i++) if (L[i].id === curAdv.id) return L[i + 1] || null;
   return null;
 }
+/* ===== v3.8 (Layout CCBI L1): renderer komposisi CCBI 1152x720 ===== */
+var ADV_LAYOUT = {"design": [1152, 720], "bg": {"img": "adventureBg", "x": -11.079999923706055, "y": -9.079999923706055, "w": 1152, "h": 768}, "paths": [{"img": "xuxian01", "cx": 546.92, "cy": 308.92, "anc": [0.5, 0.5], "w": 127.0, "h": 52.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian02", "cx": 636.92, "cy": 284.92, "anc": [0.5, 0.5], "w": 32.0, "h": 91.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian03", "cx": 617.92, "cy": 171.92, "anc": [0.5, 0.5], "w": 85.0, "h": 23.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian04", "cx": 570.92, "cy": 112.92, "anc": [0.5, 0.5], "w": 158.0, "h": 44.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian05", "cx": 341.92, "cy": 156.92, "anc": [0.5, 0.5], "w": 95.0, "h": 47.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian06", "cx": 173.92, "cy": 157.92, "anc": [0.5, 0.5], "w": 99.0, "h": 84.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian07", "cx": 56.92, "cy": 210.92, "anc": [0.5, 0.5], "w": 43.0, "h": 162.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian08", "cx": 190.92, "cy": 364.92, "anc": [0.5, 0.5], "w": 59.0, "h": 109.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian09", "cx": 184.92, "cy": 518.92, "anc": [0.5, 0.5], "w": 104.0, "h": 39.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian10", "cx": 415.92, "cy": 501.92, "anc": [0.5, 0.5], "w": 105.0, "h": 38.0, "sx": 1.0, "sy": 1.0}, {"img": "xuxian11", "cx": 692.92, "cy": 406.92, "anc": [0.5, 0.5], "w": 243.0, "h": 223.0, "sx": 1.0, "sy": 1.0}], "clouds": [{"img": "yun1", "cx": 82.92, "cy": 737.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": -2.0, "sy": 2.0}, {"img": "yun3", "cx": 53.92, "cy": 685.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": -2.0, "sy": 2.0}, {"img": "yun3", "cx": 39.92, "cy": 44.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.0}, {"img": "yun2", "cx": 127.92, "cy": 203.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": 1.0, "sy": 1.0}, {"img": "yun2", "cx": 567.92, "cy": 283.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": 1.0, "sy": 1.0}, {"img": "yun3", "cx": -4.08, "cy": 370.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": -1.0, "sy": 1.0}, {"img": "yun1", "cx": -11.08, "cy": 479.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": 1.0, "sy": 1.0}, {"img": "yun2", "cx": 178.92, "cy": 509.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": -1.0, "sy": 1.0}, {"img": "yun2", "cx": 25.92, "cy": 578.36, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": 1.0, "sy": 1.0}, {"img": "yun3", "cx": 165.92, "cy": 589.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.0}, {"img": "yun1", "cx": 298.92, "cy": 374.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": 1.0, "sy": 1.0}, {"img": "yun1", "cx": 214.92, "cy": 768.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": -1.0, "sy": 1.0}, {"img": "yun3", "cx": 720.92, "cy": 529.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.0}, {"img": "yun1", "cx": 314.92, "cy": 758.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": -1.0, "sy": 1.0}, {"img": "yun1", "cx": 214.92, "cy": 669.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": -1.0, "sy": 1.0}, {"img": "yun2", "cx": 765.92, "cy": 483.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": -1.0, "sy": 1.0}, {"img": "yun2", "cx": 651.92, "cy": 171.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": 1.0, "sy": 1.0}, {"img": "yun1", "cx": 786.92, "cy": 83.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": 1.0, "sy": 1.0}, {"img": "yun1", "cx": 998.92, "cy": 750.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": 1.0, "sy": 1.0}, {"img": "yun2", "cx": 1088.92, "cy": 256.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": -2.0, "sy": 2.0}, {"img": "yun1", "cx": 1086.92, "cy": 306.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": 2.0, "sy": 2.0}, {"img": "yun1", "cx": 1009.92, "cy": 382.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": -1.0, "sy": 1.0}, {"img": "yun3", "cx": 1116.92, "cy": 472.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.0}, {"img": "yun3", "cx": 1078.92, "cy": 249.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 2.0, "sy": 2.0}, {"img": "yun1", "cx": 992.92, "cy": 125.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": -1.0, "sy": 1.0}, {"img": "yun2", "cx": 954.92, "cy": 146.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": 1.0, "sy": 1.0}, {"img": "yun3", "cx": 1134.92, "cy": 136.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.5}, {"img": "yun3", "cx": 1120.92, "cy": 209.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.2000000476837158}, {"img": "yun3", "cx": 1120.92, "cy": 299.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.2000000476837158}, {"img": "yun3", "cx": 956.88, "cy": 230.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.0}, {"img": "yun3", "cx": 965.92, "cy": 332.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.2000000476837158, "sy": 1.2000000476837158}, {"img": "yun2", "cx": 1084.92, "cy": 331.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": 1.0, "sy": 1.0}, {"img": "yun1", "cx": 6.92, "cy": 674.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": 1.0, "sy": 1.0}, {"img": "yun2", "cx": 9.92, "cy": 760.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": 1.0, "sy": 1.0}, {"img": "yun1", "cx": 51.92, "cy": 781.92, "anc": [0.5, 0.5], "w": 194.0, "h": 62.0, "sx": 1.0, "sy": 1.0}, {"img": "yun2", "cx": 774.92, "cy": 664.92, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": -1.0, "sy": 1.0}, {"img": "yun3", "cx": 927.92, "cy": 600.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.0}, {"img": "yun2", "cx": 568.74, "cy": 680.25, "anc": [0.5, 0.5], "w": 74.0, "h": 42.0, "sx": -1.0, "sy": 1.0}, {"img": "yun3", "cx": 1148.29, "cy": 366.92, "anc": [0.5, 0.5], "w": 166.0, "h": 48.0, "sx": 1.0, "sy": 1.0}], "chapters": [{"n": 1, "img": "adven_1", "cx": 444.92, "cy": 316.92, "anc": [0.5, 0.5], "w": 140.0, "h": 90.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_1_n", "cx": 444.92, "cy": 274.92, "anc": [0.5, 0.5], "w": 79.0, "h": 43.0, "sx": 1.0, "sy": 1.0}}, {"n": 2, "img": "adven_2", "cx": 664.92, "cy": 354.92, "anc": [0.5, 0.5], "w": 121.0, "h": 59.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_2_n", "cx": 648.92, "cy": 328.92, "anc": [0.5, 0.5], "w": 94.0, "h": 43.0, "sx": 1.0, "sy": 1.0}}, {"n": 3, "img": "adven_3", "cx": 561.92, "cy": 238.92, "anc": [0.5, 0.5], "w": 132.0, "h": 116.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_3_n", "cx": 528.92, "cy": 210.92, "anc": [0.5, 0.5], "w": 78.0, "h": 40.0, "sx": 1.0, "sy": 1.0}}, {"n": 4, "img": "adven_4", "cx": 682.92, "cy": 153.92, "anc": [0.4205, 0.35], "w": 88.0, "h": 113.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_4_n", "cx": 688.92, "cy": 114.92, "anc": [0.5, 0.5], "w": 92.0, "h": 41.0, "sx": 1.0, "sy": 1.0}}, {"n": 5, "img": "adven_5", "cx": 433.48, "cy": 158.92, "anc": [0.5254, 0.4], "w": 118.0, "h": 115.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_5_n", "cx": 438.92, "cy": 110.92, "anc": [0.5, 0.5], "w": 135.0, "h": 44.0, "sx": 1.0, "sy": 1.0}}, {"n": 6, "img": "adven_6", "cx": 300.92, "cy": 230.92, "anc": [0.5, 0.5], "w": 145.0, "h": 94.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_6_n", "cx": 300.92, "cy": 189.92, "anc": [0.5, 0.5], "w": 108.0, "h": 40.0, "sx": 1.0, "sy": 1.0}}, {"n": 7, "img": "adven_7", "cx": 86.92, "cy": 112.92, "anc": [0.53, 0.4], "w": 127.0, "h": 109.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_7_n", "cx": 76.92, "cy": 70.92, "anc": [0.5, 0.5], "w": 94.0, "h": 44.0, "sx": 1.0, "sy": 1.0}}, {"n": 8, "img": "adven_8", "cx": 124.92, "cy": 316.92, "anc": [0.5, 0.5], "w": 88.0, "h": 99.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_8_n", "cx": 128.92, "cy": 268.92, "anc": [0.5, 0.5], "w": 124.0, "h": 44.0, "sx": 1.0, "sy": 1.0}}, {"n": 9, "img": "adven_9", "cx": 110.92, "cy": 462.92, "anc": [0.5, 0.5], "w": 144.0, "h": 77.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_9_n", "cx": 126.92, "cy": 424.92, "anc": [0.5, 0.5], "w": 104.0, "h": 44.0, "sx": 1.0, "sy": 1.0}}, {"n": 10, "img": "adven_10", "cx": 302.92, "cy": 546.92, "anc": [0.5, 0.5], "w": 134.0, "h": 87.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_10_n", "cx": 306.92, "cy": 502.92, "anc": [0.5, 0.5], "w": 66.0, "h": 41.0, "sx": 1.0, "sy": 1.0}}, {"n": 11, "img": "adven_11", "cx": 522.92, "cy": 518.92, "anc": [0.5, 0.5], "w": 124.0, "h": 137.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_11_n", "cx": 528.92, "cy": 458.92, "anc": [0.5, 0.5], "w": 115.0, "h": 42.0, "sx": 1.0, "sy": 1.0}}, {"n": 12, "img": "adven_12", "cx": 822.92, "cy": 292.92, "anc": [0.5, 0.3], "w": 160.0, "h": 183.0, "sx": 1.0, "sy": 1.0, "plate": {"img": "adven_12_n", "cx": 824.92, "cy": 246.92, "anc": [0.5, 0.5], "w": 114.0, "h": 22.0, "sx": 1.0, "sy": 1.0}}], "banner": {"cx": 522.92, "cy": 518.92, "sprites": [{"img": "yuan_btn_guang", "cx": 522.92, "cy": 518.92, "anc": [0.5, 0.5], "w": 212.0, "h": 212.0, "sx": 1.0, "sy": 1.0}, {"img": "adven_Bg", "cx": 522.92, "cy": 518.92, "anc": [0.5, 0.5], "w": 80.0, "h": 78.0, "sx": 2.0, "sy": 2.0}]}, "extraLandmarks": [{"img": "adven_13", "cx": 88.92, "cy": 582.92, "anc": [0.757, 0.324], "w": 122.0, "h": 61.0, "sx": 0.9359999895095825, "sy": 0.7860000133514404}, {"img": "adven_14", "cx": 201.42, "cy": 582.92, "anc": [0.757, 0.324], "w": 122.0, "h": 61.0, "sx": 0.9359999895095825, "sy": 0.7860000133514404}, {"img": "adven_13_n", "cx": 88.92, "cy": 582.92, "anc": [0.757, 0.324], "w": 122.0, "h": 61.0, "sx": 0.9359999895095825, "sy": 0.7860000133514404}, {"img": "adven_14_n", "cx": 201.42, "cy": 582.92, "anc": [0.757, 0.324], "w": 122.0, "h": 61.0, "sx": 0.9359999895095825, "sy": 0.7860000133514404}], "menu": [{"id": "jiangli", "img": "h_huodong", "px": -100.0, "py": 2.0, "anc": [1.0, 1.0], "w": 93.0, "h": 85.0}, {"id": "duihuan", "img": "duihuan", "px": -203.0, "py": 0.0, "anc": [1.0, 1.0], "w": 93.0, "h": 82.0}, {"id": "closeBtn", "img": "X", "px": -10.0, "py": -13.0, "anc": [1.0, 1.0], "w": 69.0, "h": 66.0}], "panel": {"cx": 576, "cy": 360, "bg": {"w": 740.0, "h": 420.0, "img": "RGB32_02"}, "gmbg": {"dx": -171.0, "dy": 169.0, "w": 390.0, "h": 45.0, "img": "g_m_bg"}, "labels": {"altTF": {"dx": -330.0, "dy": 169.0, "anc": [0.0, 0.5], "fs": 30.0}, "t0": {"dx": -360.0, "dy": 79.0, "anc": [0.0, 0.5], "fs": 24.0}, "t1": {"dx": -360.0, "dy": 10.0, "anc": [0.0, 0.5], "fs": 24.0}, "t2": {"dx": -360.0, "dy": -70.0, "anc": [0.0, 0.5], "fs": 24.0}, "energyTF": {"dx": -166.0, "dy": 79.0, "anc": [0.5, 0.5], "fs": 30.0}, "t3": {"dx": -360.0, "dy": -150.0, "anc": [0.0, 0.5], "fs": 24.0}, "LeftTTF": {"dx": -34.0, "dy": 79.0, "anc": [0.5, 0.5], "fs": 24.0}, "LeftValueTTF": {"dx": 51.0, "dy": 79.0, "anc": [0.5, 0.5], "fs": 24.0}, "LeftValueMaxTTF": {"dx": 69.0, "dy": 79.0, "anc": [0.5, 0.5], "fs": 24.0}, "SaodangValueTTF": {"dx": 285.0, "dy": 80.0, "anc": [0.5, 0.5], "fs": 24.0}}, "goto": {"dx": 274.0, "dy": -130.0, "w": 78.0, "h": 65.0, "img": "sudu2"}, "close": {"dx": 365.0, "dy": 198.0, "w": 69.0, "h": 66.0, "img": "X"}, "energyIcon": {"dx": -123.0, "dy": 80.0, "w": 38.0, "h": 49.0, "img": "energy"}}};
+var ccbScale = 1;
+function ccbFit(){
+  var s = Math.min(stageEl.clientWidth / 1152, stageEl.clientHeight / 720);
+  ccbScale = s; window.__ccbScale = s;
+  ['adv-world-box', 'adv-panel'].forEach(function(id){
+    var b = document.getElementById(id);
+    b.style.width = (1152 * s) + 'px'; b.style.height = (720 * s) + 'px';
+  });
+  layoutPanel();
+}
+function ccbPlace(el, e){
+  var dw = e.w * Math.abs(e.sx || 1), dh = e.h * Math.abs(e.sy || 1);
+  el.style.left = ((e.cx - e.anc[0] * dw) / 1152 * 100) + '%';
+  el.style.top = ((720 - (e.cy + (1 - e.anc[1]) * dh)) / 720 * 100) + '%';
+  el.style.width = (dw / 1152 * 100) + '%';
+  el.style.height = (dh / 720 * 100) + '%';
+  var fx = (e.sx || 1) < 0 ? -1 : 1, fy = (e.sy || 1) < 0 ? -1 : 1;
+  el.style.transformOrigin = (e.anc[0] * 100) + '% ' + ((1 - e.anc[1]) * 100) + '%';
+  el.style.transform = 'scale(' + fx + ',' + fy + ')';
+}
+function ccbImg(parent, e, cls){
+  var im = document.createElement('img');
+  im.className = cls || 'ccb-el'; im.src = 'assets/map/' + e.img + '.webp'; im.alt = '';
+  ccbPlace(im, e); parent.appendChild(im); return im;
+}
+function renderWorld(){
+  var box = document.getElementById('adv-world-box'); box.innerHTML = '';
+  var L = ADV_LAYOUT;
+  var bg = document.createElement('img'); bg.className = 'ccb-el';
+  bg.src = 'assets/map/adventureBg.webp'; bg.alt = '';
+  bg.style.left = (L.bg.x / 1152 * 100) + '%'; bg.style.top = ((720 - (L.bg.y + L.bg.h)) / 720 * 100) + '%';
+  bg.style.width = (L.bg.w / 1152 * 100) + '%'; bg.style.height = (L.bg.h / 720 * 100) + '%';
+  box.appendChild(bg);
+  L.paths.forEach(function(e){ ccbImg(box, e); });
+  var sel = L.chapters.filter(function(c){ return c.n === advChapter; })[0] || L.chapters[0];
+  L.banner.sprites.forEach(function(e){
+    ccbImg(box, {img: e.img, cx: sel.cx, cy: sel.cy, anc: e.anc, w: e.w, h: e.h, sx: e.sx, sy: e.sy});
+  });
+  L.chapters.forEach(function(c){
+    var list = ADV_STAGES.filter(function(a){ return a.c === c.n && a.t === advType; });
+    var done = list.filter(function(a){ return advDone[a.id]; }).length;
+    var b = document.createElement('button');
+    b.className = 'ccb-landmark'; b.dataset.chapter = c.n;
+    b.title = 'Bab ' + c.n + ' · ' + done + '/' + list.length + (done === list.length && list.length ? ' ✓' : '');
+    var im = document.createElement('img'); im.src = 'assets/map/' + c.img + '.webp'; im.alt = 'Bab ' + c.n;
+    b.appendChild(im);
+    if (done === list.length && list.length) b.innerHTML += '<span class="lm-done">✓</span>';
+    ccbPlace(b, c); box.appendChild(b);
+    (function(n){ b.onclick = function(){
+      advChapter = n; sfx('click', 0.5);
+      document.getElementById('adv-world').classList.add('hidden');
+      document.getElementById('adv-chapter').classList.remove('hidden');
+      renderStageSelect();
+    }; })(c.n);
+    ccbImg(box, c.plate);
+  });
+  L.clouds.forEach(function(e){ ccbImg(box, e); });
+  L.menu.forEach(function(m){
+    var b = document.createElement('button');
+    b.className = 'ccb-menubtn'; b.dataset.menu = m.id;
+    var im = document.createElement('img'); im.src = 'assets/map/' + m.img + '.webp'; im.alt = m.id;
+    b.appendChild(im);
+    ccbPlace(b, {cx: 1152 + m.px, cy: 720 + m.py, anc: m.anc, w: m.w, h: m.h, sx: 1, sy: 1});
+    b.onclick = function(){
+      sfx('click', 0.4);
+      if (m.id === 'closeBtn') document.getElementById('btn-stages-back').click();
+      else document.getElementById('turninfo').textContent = '🗺️ Tombol asli ' + (m.id === 'jiangli' ? 'Hadiah' : 'Tukar') + ' — sistemnya belum dibangun.';
+    };
+    box.appendChild(b);
+  });
+}
+function layoutPanel(){
+  var P = ADV_LAYOUT.panel; if (!P) return;
+  function slot(e){ return {cx: P.cx + e.dx, cy: P.cy + e.dy, anc: e.anc || [0.5, 0.5], w: e.w, h: e.h, sx: 1, sy: 1}; }
+  var bg = document.getElementById('ap-bg');
+  bg.src = 'assets/map/' + P.bg.img + '.webp';
+  ccbPlace(bg, {cx: P.cx, cy: P.cy, anc: [0.5, 0.5], w: P.bg.w, h: P.bg.h, sx: 1, sy: 1});
+  var gm = document.getElementById('ap-gmbg');
+  gm.src = 'assets/map/' + P.gmbg.img + '.webp'; ccbPlace(gm, slot(P.gmbg));
+  var ei = document.getElementById('ap-energy-icon');
+  ei.src = 'assets/map/' + P.energyIcon.img + '.webp'; ccbPlace(ei, slot(P.energyIcon));
+  ccbPlace(document.getElementById('adv-enter'), slot(P.goto));
+  ccbPlace(document.getElementById('adv-close'), slot(P.close));
+  var map = [['ap-title', 'altTF'], ['ap-foes', 't1'], ['ap-reward', 't2'], ['ap-note', 't3'], ['ap-energy', 'energyTF']];
+  map.forEach(function(pr){
+    var el = document.getElementById(pr[0]), s = P.labels[pr[1]]; if (!s) return;
+    el.style.left = ((P.cx + s.dx) / 1152 * 100) + '%';
+    el.style.top = ((720 - (P.cy + s.dy)) / 720 * 100) + '%';
+    el.style.transform = 'translate(' + (-s.anc[0] * 100) + '%,-50%)';
+    el.style.fontSize = ((s.fs || 24) * ccbScale) + 'px';
+  });
+  document.querySelector('#adv-enter span').style.fontSize = (20 * ccbScale) + 'px';
+}
+document.getElementById('btn-world-back').onclick = function(){
+  sfx('click', 0.5);
+  document.getElementById('adv-chapter').classList.add('hidden');
+  document.getElementById('adv-world').classList.remove('hidden');
+  renderWorld(); ccbFit();
+};
+window.addEventListener('resize', function(){
+  if (!document.getElementById('screen-stages').classList.contains('hidden')) ccbFit();
+});
 function showStageSelect(){
   phase = 'title'; battleToken++;
   document.getElementById('vicpanel').classList.remove('on');
@@ -1783,8 +1919,11 @@ function showStageSelect(){
   document.getElementById('screen-pick').classList.add('hidden');
   document.getElementById('hud').classList.add('hidden');
   document.getElementById('screen-stages').classList.remove('hidden');
-  document.getElementById('turninfo').textContent = '🗺️ Pilih stage Adventure.';
-  renderStageSelect(); refreshTop();
+  document.getElementById('adv-world').classList.remove('hidden');
+  document.getElementById('adv-chapter').classList.add('hidden');
+  document.getElementById('adv-panelbox').classList.add('hidden');
+  document.getElementById('turninfo').textContent = '🗺️ Peta Dunia Adventure — ketuk tengara bab.';
+  renderWorld(); ccbFit(); refreshTop();
 }
 var ADV_MAP = {"1":[[1,-1,2,0,0,0,0,0,0],[0,0,-2,0,0,0,0,0,0],[0,0,3,-1,4,-1,5,-1,6]],"2":[[1,0,0,0,5,-1,6,-1,7,-1,16,0,0],[-2,0,0,0,-2,0,0,0,-2,0,0,0,0],[2,-1,3,-1,4,0,9,-1,8,0,0,0,14],[0,0,-2,0,0,0,-2,0,0,0,0,0,-2],[0,0,15,0,0,0,10,-1,11,-1,12,-1,13]],"3":[[1,-1,2,0,0,0,6,-1,7,-1,8,-1,27,0,0,0,0,0,0],[0,0,-2,0,0,0,-2,0,-2,0,-2,0,0,0,0,0,0,0,0],[0,0,3,-1,4,-1,5,0,26,0,9,0,0,0,21,-1,22,0,0],[0,0,0,0,0,0,0,0,0,0,-2,0,0,0,-2,0,-2,0,0],[0,0,0,0,13,-1,12,-1,11,-1,10,0,19,-1,20,0,23,0,0],[0,0,0,0,-2,0,0,0,0,0,0,0,-2,0,0,0,-2,0,0],[0,0,28,-1,14,-1,15,-1,16,-1,17,-1,18,0,0,0,24,-1,25]],"4":[[0,0,4,-1,5,0,8,-1,9,-1,10,-1,28,0,0,0,0,0,22,-1,23,-1,24],[0,0,-2,0,-2,0,-2,0,0,0,-2,0,0,0,0,0,0,0,-2,0,0,0,-2],[0,0,3,0,6,-1,7,0,0,0,11,0,0,0,0,0,20,-1,21,0,0,0,25],[0,0,-2,0,0,0,-2,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0],[1,-1,2,0,0,0,26,0,13,-1,12,0,0,0,18,-1,19,-1,27,0,0,0,0],[0,0,0,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,14,-1,15,-1,16,-1,17,-1,29,0,0,0,0,0,0]],"5":[[1,0,0,0,9,-1,10,-1,11,0,0,0,0,0,22,-1,23,-1,24,-1,33,0,0],[-2,0,0,0,-2,0,-2,0,-2,0,0,0,0,0,-2,0,0,0,-2,0,0,0,0],[2,0,7,-1,8,0,30,0,12,0,0,0,31,-1,21,-1,20,0,25,-1,26,0,0],[-2,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0,0,-2,0,0,0,-2,0,0],[3,0,6,0,0,0,0,0,13,-1,14,0,0,0,0,0,19,0,0,0,27,0,0],[-2,0,-2,0,0,0,0,0,-2,0,-2,0,0,0,0,0,-2,0,0,0,-2,0,0],[4,-1,5,0,0,0,0,0,32,0,15,-1,16,-1,17,-1,18,0,0,0,28,-1,29]],"6":[[1,-1,2,0,0,0,14,-1,15,-1,16,-1,17,-1,25],[0,0,-2,0,0,0,-2,0,0,0,-2,0,-2,0,0],[4,-1,3,-1,24,0,13,0,0,0,23,0,18,0,0],[-2,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0],[5,0,0,0,22,0,12,-1,11,0,0,0,19,-1,20],[-2,0,0,0,-2,0,0,0,-2,0,0,0,0,0,-2],[6,-1,7,-1,8,-1,9,-1,10,0,0,0,0,0,21]],"7":[[1,-1,2,0,0,0,24,0,0,0,0,0,25,-1,16,-1,17,0,0],[0,0,-2,0,0,0,-2,0,0,0,0,0,0,0,-2,0,-2,0,0],[0,0,3,0,0,0,9,-1,10,0,0,0,0,0,15,0,18,0,23],[0,0,-2,0,0,0,-2,0,-2,0,0,0,0,0,-2,0,-2,0,-2],[0,0,4,0,0,0,8,0,11,-1,12,-1,13,-1,14,0,19,0,22],[0,0,-2,0,0,0,-2,0,0,0,0,0,0,0,-2,0,-2,0,-2],[26,-1,5,-1,6,-1,7,0,0,0,0,0,0,0,27,0,20,-1,21]],"8":[[0,0,4,-1,5,-1,6,0,0,0,0,0,0,0,30,0,21,-1,22,-1,32],[0,0,-2,0,0,0,-2,0,0,0,0,0,0,0,-2,0,-2,0,-2,0,0],[0,0,3,0,0,0,7,0,0,0,31,0,0,0,19,-1,20,0,23,0,0],[0,0,-2,0,0,0,-2,0,0,0,-2,0,0,0,-2,0,0,0,-2,0,0],[1,-1,2,0,9,-1,8,-1,29,0,14,-1,15,0,18,0,25,-1,24,0,0],[0,0,0,0,-2,0,0,0,0,0,-2,0,-2,0,-2,0,-2,0,0,0,0],[0,0,0,0,10,-1,11,-1,12,-1,13,0,16,-1,17,0,26,-1,27,-1,28]],"9":[[0,0,0,0,1,0,0,0,36,0,0,0,19,-1,20,-1,21,-1,22,-1,35,0,0,0,0,0,0],[0,0,0,0,-2,0,0,0,-1,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0,0,0],[0,0,0,0,2,0,0,0,10,-1,11,0,18,-1,17,0,0,0,23,-1,24,0,0,0,0,0,0],[0,0,0,0,-2,0,0,0,-2,0,-2,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0],[0,0,4,-1,3,0,0,0,9,0,12,0,0,0,16,0,0,0,26,-1,25,0,0,0,31,-1,32],[0,0,-2,0,0,0,0,0,-2,0,-2,0,0,0,-2,0,0,0,-2,0,0,0,0,0,-2,0,-2],[34,-1,5,-1,6,-1,7,-1,8,0,13,-1,14,-1,15,0,37,-1,27,-1,28,-1,29,-1,30,0,33]],"10":[[1,0,0,0,0,0,0,0,13,-1,14,-1,15,-1,16,0,0,0,0,0,0,0,0,0,0,0,0,0,33,-1,34,0,0,0,0],[-2,0,0,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,-2,0,-2,0,0,0,0],[2,-1,3,0,0,0,11,-1,12,-1,41,0,0,0,17,0,0,0,0,0,42,0,0,0,44,-1,31,-1,32,0,35,0,38,-1,39],[0,0,-2,0,0,0,-2,0,0,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0,0,-2,0,-2,0,-2],[0,0,4,0,43,0,10,-1,9,0,0,0,19,-1,18,0,0,0,24,-1,25,0,0,0,0,0,30,0,0,0,36,-1,37,0,40],[0,0,-2,0,-2,0,0,0,-2,0,0,0,-2,0,0,0,0,0,-2,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0,0,0],[0,0,5,-1,6,-1,7,-1,8,0,0,0,20,-1,21,-1,22,-1,23,0,26,-1,27,-1,28,-1,29,0,0,0,0,0,0,0,0]],"11":[[0,0,0,0,4,-1,5,-1,6,-1,44,0,18,-1,19,-1,20,-1,21,0,0,0,0,0,0,0,31,-1,32,-1,33,-1,34,0,0],[0,0,0,0,-2,0,0,0,-2,0,0,0,-2,0,0,0,-2,0,-2,0,0,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0],[1,-1,2,-1,3,0,8,-1,7,0,0,0,17,0,0,0,42,0,22,-1,23,0,0,0,29,-1,30,-1,43,0,0,0,35,-1,36],[0,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,0,0,-2,0,0,0,-2,0,0,0,0,0,0,0,0,0,-2],[0,0,0,0,0,0,9,0,0,0,0,0,16,-1,15,0,0,0,0,0,24,0,27,-1,28,0,0,0,0,0,0,0,38,-1,37],[0,0,0,0,0,0,-2,0,0,0,0,0,0,0,-2,0,0,0,0,0,-2,0,-2,0,0,0,0,0,0,0,0,0,-2,0,0],[0,0,0,0,41,-1,10,-1,11,-1,12,-1,13,-1,14,0,0,0,0,0,25,-1,26,-1,45,0,0,0,0,0,0,0,39,-1,40]],"12":[[1,-1,2,0,0,0,36,-1,11,-1,12,-1,13,0,0,0,0,0,37,0,0,0,0,0,38,0,0,0,29,-1,30,0,0,0,0],[0,0,-2,0,0,0,0,0,-2,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,-2,0,0,0,-2,0,-2,0,0,0,0],[0,0,3,0,0,0,0,0,10,0,0,0,14,-1,15,0,18,-1,19,-1,20,0,0,0,26,-1,27,-1,28,0,31,0,0,0,0],[0,0,-2,0,0,0,0,0,-2,0,0,0,0,0,-2,0,-2,0,0,0,-2,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0],[0,0,4,-1,5,0,8,-1,9,0,0,0,0,0,16,-1,17,0,0,0,21,0,0,0,25,0,0,0,0,0,32,0,0,0,0],[0,0,0,0,-2,0,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,-2,0,0,0,-2,0,0,0,0,0,-2,0,0,0,0],[0,0,0,0,6,-1,7,-1,39,0,0,0,0,0,0,0,0,0,0,0,22,-1,23,-1,24,-1,40,0,0,0,33,-1,34,-1,35]]};
 var advSel = null;
@@ -1806,7 +1945,7 @@ function renderStageSelect(){
   document.getElementById('adv-landmark').src = 'assets/map/adven_' + advChapter + '.webp';
   document.getElementById('adv-nameplate').src = 'assets/map/adven_' + advChapter + '_n.webp';
   document.getElementById('adv-maptitle').textContent = 'Bab ' + advChapter + ' · ' + (advType === 2 ? 'Elite' : 'Biasa') + ' — ketuk node untuk detail stage';
-  document.getElementById('adv-panel').classList.add('hidden'); advSel = null;
+  document.getElementById('adv-panelbox').classList.add('hidden'); advSel = null;
   var grid = ADV_MAP[advChapter], map = document.getElementById('adv-map'); map.innerHTML = '';
   var rows = grid.length, cols = 0;
   grid.forEach(function(r){ cols = Math.max(cols, r.length); });
@@ -1847,11 +1986,14 @@ function selectAdvNode(rec, el){
   var comp = Object.keys(cnt).map(function(rid){ var b0 = ROLE_NPC[rid]; return (b0 ? b0.nm : ('Role ' + rid)) + (cnt[rid] > 1 ? ' ×' + cnt[rid] : ''); }).join(', ');
   document.getElementById('ap-title').textContent = rec.s + '. ' + rec.nm + (advDone[rec.id] ? ' — ✓ Tuntas' : '');
   document.getElementById('ap-foes').textContent = '⚔️ ' + comp;
-  document.getElementById('ap-reward').textContent = '⚡' + rec.en + ' · EXP +' + rec.exp + ' · 🪙 ' + rec.sil + (advDone[rec.id] ? ' · (EXP/Silver hanya dari clear pertama)' : '');
-  document.getElementById('adv-panel').classList.remove('hidden');
+  document.getElementById('ap-reward').textContent = 'EXP +' + rec.exp + ' · 🪙 ' + rec.sil;
+  document.getElementById('ap-note').textContent = advDone[rec.id] ? '(EXP/Silver hanya dari clear pertama)' : '';
+  document.getElementById('ap-energy').textContent = rec.en;
+  layoutPanel();
+  document.getElementById('adv-panelbox').classList.remove('hidden');
 }
 document.getElementById('adv-enter').onclick = function(){ if (advSel){ sfx('click', 0.6); startStage(advSel, true); } };
-document.getElementById('adv-close').onclick = function(){ document.getElementById('adv-panel').classList.add('hidden'); advSel = null; document.querySelectorAll('.advnode.sel').forEach(function(n){ n.classList.remove('sel'); }); };
+document.getElementById('adv-close').onclick = function(){ document.getElementById('adv-panelbox').classList.add('hidden'); advSel = null; document.querySelectorAll('.advnode.sel').forEach(function(n){ n.classList.remove('sel'); }); };
 
 function startStage(rec, fresh){
   curAdv = rec; advChapter = rec.c; advType = rec.t;
