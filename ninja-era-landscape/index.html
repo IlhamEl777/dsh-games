@@ -31,24 +31,22 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
 #log .good{color:#b9f4c9}#log .bad{color:#ffb3b3}#log .sys{color:var(--acc)}
 @media (max-width:760px){#logpane{display:none}}
 /* ===== HUD duel ala video ===== */
-#hud{position:absolute;top:10px;left:12px;right:12px;display:flex;align-items:flex-start;z-index:12;pointer-events:none}
-.hudside{display:flex;align-items:center;gap:8px;flex:1}
-.hudside.right{flex-direction:row-reverse;text-align:right}
-.hudface{width:56px;height:56px;border-radius:10px;border:2px solid #ffb340;background:#0a0e1a;object-fit:cover;box-shadow:0 2px 10px rgba(0,0,0,.6)}
-.hudside.right .hudface{border-color:#ff5d5d}
-.hudinfo{min-width:0}
-.hudnm{font-weight:800;font-size:15px;text-shadow:0 1px 4px #000,0 0 10px #000;white-space:nowrap}
-.hudbar{width:min(240px,26vw);height:13px;background:rgba(5,8,16,.8);border:1.5px solid rgba(255,255,255,.55);border-radius:99px;overflow:hidden;margin-top:3px}
-.hudbar i{display:block;height:100%;background:linear-gradient(180deg,#ff7a5c,#e0331f);transition:width .35s}
-.hudck{height:6px;margin-top:3px}
-.hudck i{background:linear-gradient(180deg,#7cc7ff,#2277dd)}
-.hudteam{display:flex;gap:3px;margin-top:4px}
-.hudside.right .hudteam{flex-direction:row-reverse}
+#hud{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:12;pointer-events:none}
+#hud-box{overflow:visible}
+.hudface{position:absolute;object-fit:cover;background:#0a0e1a;clip-path:polygon(24% 0,100% 7%,76% 100%,0 93%)}
+.hudplate{pointer-events:none}
+.hudtrack{position:absolute;overflow:hidden}
+.hudtrack i{display:block;height:100%;background:linear-gradient(180deg,#ff7a5c,#e0331f);transition:width .35s}
+.hudtrack.r i{margin-left:auto}
+.hudtrack.hudck i{background:linear-gradient(180deg,#7cc7ff,#2277dd)}
+.hudnm{position:absolute;font-weight:700;font-size:15px;color:#fff;text-shadow:0 1px 4px #000,0 0 10px #000;white-space:nowrap}
+.hudteam{position:absolute;display:flex;gap:3px}
 .hudteam .ti{position:relative;width:24px;height:24px}
 .hudteam .ti img{width:24px;height:24px;border-radius:6px;border:1px solid rgba(255,255,255,.4);object-fit:cover}
 .hudteam .ti.dead img{filter:grayscale(1);opacity:.45}
 .hudteam .ti.dead::after{content:'✕';position:absolute;inset:0;color:#ff5d5d;font-weight:900;font-size:15px;text-align:center;line-height:24px;text-shadow:0 0 4px #000}
-#vsbadge{flex:0 0 auto;width:52px;height:52px;margin:0 10px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#ffd34d,#f08c1a 55%,#c33d12);border:2px solid #ffe9b0;display:flex;align-items:center;justify-content:center;font-weight:900;font-style:italic;font-size:19px;color:#5c1800;text-shadow:0 1px 0 #ffe9b0;box-shadow:0 0 18px rgba(240,140,26,.55);transform:rotate(-6deg)}
+#vsbadge{position:absolute}
+#vsbadge img{width:100%;height:100%;display:block}
 /* ===== entitas petarung ===== */
 .ent{position:absolute;width:0;height:0;z-index:5}
 .ent canvas{position:absolute;pointer-events:none}
@@ -67,7 +65,7 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
 .badge.heal b{color:#063d1e;text-shadow:0 1px 0 #d8ffe4}
 @keyframes badgePop{0%{opacity:0;transform:translateX(-50%) scale(.3) rotate(-14deg)}18%{opacity:1;transform:translateX(-50%) scale(1.18) rotate(4deg)}35%{transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(1.05) translateY(-30px)}}
 /* ===== pengumuman jurus ===== */
-#callout{position:absolute;left:0;right:0;top:34%;text-align:center;z-index:18;pointer-events:none;opacity:0}
+#callout{position:absolute;left:0;right:0;top:18%;text-align:center;z-index:18;pointer-events:none;opacity:0}
 #callout.on{animation:callA 1.5s ease-out forwards}
 #callout .skill{font-size:clamp(26px,4.6vw,46px);font-weight:900;font-style:italic;letter-spacing:1px;background:linear-gradient(180deg,#fff3c4,#ffb340 60%,#f06423);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(90,20,0,.85)) drop-shadow(0 0 16px rgba(240,140,26,.5))}
 #callout .who{font-size:14px;color:#fff;text-shadow:0 2px 6px #000;font-weight:700;margin-top:2px}
@@ -89,7 +87,7 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
 @keyframes blink{0%,100%{opacity:.35}50%{opacity:1}}
 #dlg-skip{position:absolute;top:76px;right:14px;z-index:21;background:rgba(10,14,26,.85)}
 /* ===== panel kemenangan ===== */
-#vicpanel{position:absolute;top:0;right:0;bottom:0;width:min(320px,72%);background:linear-gradient(270deg,rgba(7,10,20,.96),rgba(7,10,20,.88));border-left:2px solid #ffb340;z-index:19;padding:20px 18px;transform:translateX(105%);transition:transform .45s ease-out;display:flex;flex-direction:column}
+#vicpanel{position:absolute;top:0;right:0;bottom:0;width:min(320px,72%);background:#070a14 url('assets/battle/gameEndBg.webp') right center/auto 100% no-repeat;border-left:2px solid #ffb340;z-index:19;padding:20px 18px;transform:translateX(105%);transition:transform .45s ease-out;display:flex;flex-direction:column}
 #vicpanel.on{transform:translateX(0)}
 #vicpanel h2{font-size:30px;font-style:italic;background:linear-gradient(180deg,#fff3c4,#ffb340 60%,#f06423);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 rgba(90,20,0,.8))}
 #vicpanel .gain{color:#b9f4c9;font-weight:700;margin:4px 0 12px}
@@ -120,10 +118,13 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
 .card .sprhost{position:relative;height:96px;display:block}
 .card .sprhost canvas{position:absolute;pointer-events:none}
 .syn{background:rgba(16,36,22,.92);border:1px solid #2c5c3a;color:#b9f4c9;border-radius:10px;padding:8px 12px;font-size:13px;margin:12px 0 4px;display:none}
-#screen-end{background:rgba(5,8,16,.72);justify-content:center;text-align:center;z-index:22}
-#screen-end .big{font-size:52px}
-#screen-end h2{margin:6px 0;font-size:26px}
-#screen-end p{color:#dbe4ff;margin-bottom:16px}
+#screen-end{background:rgba(5,8,16,.45);justify-content:center;text-align:center;z-index:22}
+#screen-end .big,#screen-end h2{display:none}
+#end-box{overflow:visible;text-align:left}
+#end-desc{position:absolute;color:#dbe4ff;font-size:15px;line-height:1.55;text-align:center;margin:0}
+.endbtn{position:absolute;background:none;border:none;padding:0;cursor:pointer;pointer-events:auto}
+.endbtn img{width:100%;height:100%;display:block}
+.endglow{pointer-events:none}
 /* ===== v3.2 selector slide + mode grid ===== */
 #screen-pick>*{flex-shrink:0}
 #pickmode{display:flex;gap:8px;margin:2px 0 10px;position:relative;z-index:30}
@@ -337,24 +338,22 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
       <div id="stage">
         <canvas id="summon"></canvas>
         <div id="hud" class="hidden">
-          <div class="hudside left">
+          <div class="ccb-box" id="hud-box">
             <img class="hudface" id="hud-face-l" alt="">
-            <div class="hudinfo">
-              <div class="hudnm" id="hud-nm-l">—</div>
-              <div class="hudbar"><i id="hud-hp-l"></i></div>
-              <div class="hudbar hudck"><i id="hud-ck-l"></i></div>
-              <div class="hudteam" id="hud-team-l"></div>
-            </div>
-          </div>
-          <div id="vsbadge">VS</div>
-          <div class="hudside right">
+            <img class="ccb-el hudplate" id="hud-plate-l" src="assets/battle/hpbg.webp" alt="">
+            <img class="ccb-el" id="hud-frame-l" src="assets/battle/hpshowbg.webp" alt="">
+            <div class="hudtrack" id="hud-track-l"><i id="hud-hp-l"></i></div>
+            <div class="hudtrack hudck" id="hud-cktrack-l"><i id="hud-ck-l"></i></div>
+            <div class="hudnm" id="hud-nm-l">—</div>
+            <div class="hudteam" id="hud-team-l"></div>
             <img class="hudface" id="hud-face-r" alt="">
-            <div class="hudinfo">
-              <div class="hudnm" id="hud-nm-r">—</div>
-              <div class="hudbar"><i id="hud-hp-r"></i></div>
-              <div class="hudbar hudck"><i id="hud-ck-r"></i></div>
-              <div class="hudteam" id="hud-team-r"></div>
-            </div>
+            <img class="ccb-el hudplate" id="hud-plate-r" src="assets/battle/hpbg.webp" alt="">
+            <img class="ccb-el" id="hud-frame-r" src="assets/battle/hpshowbg.webp" alt="">
+            <div class="hudtrack r" id="hud-track-r"><i id="hud-hp-r"></i></div>
+            <div class="hudtrack hudck r" id="hud-cktrack-r"><i id="hud-ck-r"></i></div>
+            <div class="hudnm" id="hud-nm-r">—</div>
+            <div class="hudteam" id="hud-team-r"></div>
+            <div id="vsbadge"><img src="assets/battle/vs.webp" alt="VS"></div>
           </div>
         </div>
         <div id="callout"><div class="skill" id="callout-skill"></div><div class="who" id="callout-who"></div></div>
@@ -445,11 +444,18 @@ button.primary{background:linear-gradient(180deg,#ffb340,#f08c1a);color:#231600;
           </div></div>
         </section>
         <section id="screen-end" class="screen hidden">
+          <div class="ccb-box" id="end-box">
+            <img class="ccb-el" id="end-panel" src="assets/battle/gameEndBg.webp" alt="">
+            <img class="ccb-el" id="end-banner" src="assets/battle/winBg.webp" alt="">
+            <img class="ccb-el" id="end-zhanli" src="assets/battle/zhanlipin.webp" alt="">
+            <p id="end-desc"></p>
+            <img class="ccb-el endglow" id="end-glow" src="assets/map/yuan_btn_guang.webp" alt="">
+            <button class="endbtn" id="btn-end-boost"><img src="assets/battle/qianghua.webp" alt="Perkuat"></button>
+            <button class="endbtn" id="btn-again"><img src="assets/battle/zaishiyici.webp" alt="Main Lagi"></button>
+            <button class="endbtn" id="btn-end-map"><img src="assets/battle/lingqujiangli.webp" alt="Klaim"></button>
+          </div>
           <div class="big" id="end-emoji">🏆</div>
           <h2 id="end-title">Menang!</h2>
-          <p id="end-desc"></p>
-          <button class="primary" id="btn-again">🔁 Main Lagi</button>
-          <button id="btn-end-map" style="margin-top:10px">🗺️ Pilih Stage</button>
         </section>
       </div>
     </div>
@@ -1745,6 +1751,79 @@ function stageWin(){
   document.getElementById('turninfo').textContent = '🏆 Stage bersih!';
   refreshTop();
 }
+/* ===== v3.13 (Layout CCBI L3): HUD battle + Win/Lose ===== */
+var HUD_LAYOUT = {"plateL": {"cx": 206.5, "cy": 675.5, "anc": [0.5, 0.5], "w": 413, "h": 89, "sx": 1, "sy": 1}, "plateR": {"cx": 945.5, "cy": 675.5, "anc": [0.5, 0.5], "w": 413, "h": 89, "sx": -1, "sy": 1}, "faceL": {"cx": 55, "cy": 676, "anc": [0.5, 0.5], "w": 90, "h": 68, "sx": 1, "sy": 1}, "faceR": {"cx": 1097, "cy": 676, "anc": [0.5, 0.5], "w": 90, "h": 68, "sx": 1, "sy": 1}, "frameL": {"cx": 239, "cy": 679, "anc": [0.5, 0.5], "w": 314, "h": 22, "sx": 1, "sy": 1}, "frameR": {"cx": 913, "cy": 679, "anc": [0.5, 0.5], "w": 314, "h": 22, "sx": 1, "sy": 1}, "trackL": {"cx": 239, "cy": 679.5, "anc": [0.5, 0.5], "w": 310, "h": 21, "sx": 1, "sy": 1}, "trackR": {"cx": 913, "cy": 679.5, "anc": [0.5, 0.5], "w": 310, "h": 21, "sx": 1, "sy": 1}, "ckL": {"cx": 282, "cy": 644, "anc": [0.5, 0.5], "w": 224, "h": 8, "sx": 1, "sy": 1}, "ckR": {"cx": 870, "cy": 644, "anc": [0.5, 0.5], "w": 224, "h": 8, "sx": 1, "sy": 1}, "nameL": {"x": 86, "y": 656, "anc": [0, 0.5], "fs": 16}, "nameR": {"x": 1066, "y": 656, "anc": [1, 0.5], "fs": 16}, "teamL": {"x": 86, "y": 634, "anc": [0, 1]}, "teamR": {"x": 1066, "y": 634, "anc": [1, 1]}, "vs": {"cx": 576, "cy": 697.5, "anc": [0.5, 1], "w": 90, "h": 93, "sx": 1, "sy": 1}, "calloutCy": 561.6};
+var END_LAYOUT = {"panel": {"cx": 827, "cy": 360, "anc": [0.5, 0.5], "w": 650, "h": 720, "sx": 1, "sy": 1}, "bannerWin": {"cx": 892, "cy": 550, "anc": [0.5, 0.5], "w": 384, "h": 97, "sx": 1, "sy": 1}, "bannerLose": {"cx": 892, "cy": 550, "anc": [0.5, 0.5], "w": 356, "h": 94, "sx": 1, "sy": 1}, "zhanli": {"cx": 660, "cy": 166, "anc": [0.5, 0.5], "w": 161, "h": 57, "sx": 1, "sy": 1}, "glowClaim": {"cx": 1038, "cy": 100, "anc": [0.5, 0.5], "w": 212, "h": 212, "sx": 1, "sy": 1}, "glowBoost": {"cx": 662, "cy": 100, "anc": [0.5, 0.5], "w": 212, "h": 212, "sx": 1, "sy": 1}, "btnClaim": {"cx": 1038, "cy": 100, "anc": [0.5, 0.5], "w": 123, "h": 125, "sx": 1, "sy": 1}, "btnBoost": {"cx": 662, "cy": 100, "anc": [0.5, 0.5], "w": 108, "h": 109, "sx": 1, "sy": 1}, "btnRetreat": {"cx": 847, "cy": 110, "anc": [0.5, 0.5], "w": 117, "h": 126, "sx": 1, "sy": 1}, "btnRetry": {"cx": 996, "cy": 100, "anc": [0.5, 0.5], "w": 122, "h": 123, "sx": 1, "sy": 1}, "desc": {"cx": 892, "cy": 430, "w": 560}};
+
+function l3Label(el, s){
+  el.style.left = (s.x / 1152 * 100) + '%';
+  el.style.top = ((720 - s.y) / 720 * 100) + '%';
+  el.style.transform = 'translate(' + (s.anc[0] ? '-100%' : '0') + ',-50%)';
+}
+function buildHudCcb(){
+  var H = HUD_LAYOUT, box = document.getElementById('hud-box');
+  if (!box || box.dataset.built) return; box.dataset.built = 1;
+  ccbPlace(document.getElementById('hud-face-l'), H.faceL);
+  ccbPlace(document.getElementById('hud-plate-l'), H.plateL);
+  ccbPlace(document.getElementById('hud-frame-l'), H.frameL);
+  ccbPlace(document.getElementById('hud-track-l'), H.trackL);
+  ccbPlace(document.getElementById('hud-cktrack-l'), H.ckL);
+  l3Label(document.getElementById('hud-nm-l'), H.nameL);
+  var tl = document.getElementById('hud-team-l');
+  tl.style.left = (H.teamL.x / 1152 * 100) + '%'; tl.style.top = ((720 - H.teamL.y) / 720 * 100) + '%';
+  ccbPlace(document.getElementById('hud-face-r'), H.faceR);
+  ccbPlace(document.getElementById('hud-plate-r'), H.plateR);
+  ccbPlace(document.getElementById('hud-frame-r'), H.frameR);
+  ccbPlace(document.getElementById('hud-track-r'), H.trackR);
+  ccbPlace(document.getElementById('hud-cktrack-r'), H.ckR);
+  l3Label(document.getElementById('hud-nm-r'), H.nameR);
+  var tr = document.getElementById('hud-team-r');
+  tr.style.left = (H.teamR.x / 1152 * 100) + '%'; tr.style.top = ((720 - H.teamR.y) / 720 * 100) + '%';
+  tr.style.transform = 'translateX(-100%)'; tr.style.flexDirection = 'row-reverse';
+  ccbPlace(document.getElementById('vsbadge'), H.vs);
+}
+function buildEndCcb(){
+  var box = document.getElementById('end-box');
+  if (!box || box.dataset.built) return; box.dataset.built = 1;
+  document.getElementById('btn-end-boost').addEventListener('click', function(){
+    document.getElementById('turninfo').textContent = '🔒 Perkuat — sistemnya belum dibangun.';
+  });
+}
+function layoutEnd(won){
+  ccbFit();
+  var E = END_LAYOUT;
+  ccbPlace(document.getElementById('end-panel'), E.panel);
+  var bn = document.getElementById('end-banner');
+  bn.src = 'assets/battle/' + (won ? 'winBg' : 'lostBg') + '.webp';
+  ccbPlace(bn, won ? E.bannerWin : E.bannerLose);
+  var zl = document.getElementById('end-zhanli');
+  zl.style.display = won ? '' : 'none'; if (won) ccbPlace(zl, E.zhanli);
+  var d = document.getElementById('end-desc');
+  d.style.left = ((E.desc.cx - E.desc.w / 2) / 1152 * 100) + '%';
+  d.style.width = (E.desc.w / 1152 * 100) + '%';
+  d.style.top = ((720 - (E.desc.cy + 34)) / 720 * 100) + '%';
+  var gl = document.getElementById('end-glow');
+  ccbPlace(gl, won ? E.glowClaim : E.glowBoost);
+  var bMap = document.getElementById('btn-end-map'), bAg = document.getElementById('btn-again'), bBo = document.getElementById('btn-end-boost');
+  if (won){
+    bAg.style.display = 'none'; bBo.style.display = 'none';
+    bMap.style.display = ''; bMap.querySelector('img').src = 'assets/battle/lingqujiangli.webp';
+    ccbPlace(bMap, E.btnClaim);
+  } else {
+    bBo.style.display = ''; ccbPlace(bBo, E.btnBoost);
+    bMap.style.display = ''; bMap.querySelector('img').src = 'assets/battle/zanshichetui.webp';
+    ccbPlace(bMap, E.btnRetreat);
+    bAg.style.display = ''; bAg.querySelector('img').src = 'assets/battle/zaishiyici.webp';
+    ccbPlace(bAg, E.btnRetry);
+  }
+}
+window.__l3fonts = function(){
+  var s = window.__ccbScale || 1;
+  ['hud-nm-l', 'hud-nm-r'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.style.fontSize = (16 * s) + 'px';
+  });
+};
+buildHudCcb(); buildEndCcb();
 function gameEnd(won){
   phase = won ? 'won' : 'lost'; battleToken++;
   if (!won) score = Math.round(score * 0.7);
@@ -1753,6 +1832,7 @@ function gameEnd(won){
   document.getElementById('btn-skipbattle').disabled = true;
   document.getElementById('hud').classList.add('hidden');
   document.getElementById('screen-end').classList.remove('hidden');
+  layoutEnd(won);
   document.getElementById('end-emoji').textContent = won ? '🏆' : '💀';
   document.getElementById('end-title').textContent = won ? 'Semua Stage Tuntas!' : 'Tim Tumbang di ' + advName(curAdv);
   document.getElementById('end-desc').textContent = 'Skor akhir: ' + score + ' poin · ' + round + ' ronde di stage terakhir' + (syn ? ' · Sinergi: ' + syn.nm : '');
@@ -1815,11 +1895,12 @@ var ccbScale = 1;
 function ccbFit(){
   var s = Math.min(stageEl.clientWidth / 1152, stageEl.clientHeight / 720);
   ccbScale = s; window.__ccbScale = s;
-  ['adv-world-box', 'adv-panel', 'home-box'].forEach(function(id){
+  ['adv-world-box', 'adv-panel', 'home-box', 'hud-box', 'end-box'].forEach(function(id){
     var b = document.getElementById(id);
     b.style.width = (1152 * s) + 'px'; b.style.height = (720 * s) + 'px';
   });
   layoutPanel();
+  if (window.__l3fonts) window.__l3fonts();
 }
 function ccbPlace(el, e){
   var dw = e.w * Math.abs(e.sx || 1), dh = e.h * Math.abs(e.sy || 1);
